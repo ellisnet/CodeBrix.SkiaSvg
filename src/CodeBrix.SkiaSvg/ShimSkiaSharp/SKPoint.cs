@@ -33,6 +33,7 @@ public readonly struct SKPoint
         Y = y;
     }
 
+    /// <inheritdoc />
     public override string ToString()
         => FormattableString.Invariant($"{X}, {Y}");
 }

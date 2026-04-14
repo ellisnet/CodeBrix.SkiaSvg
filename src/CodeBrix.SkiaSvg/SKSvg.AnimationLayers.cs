@@ -103,6 +103,9 @@ public partial class SKSvg
     private SkiaSharp.SKPicture _staticAnimationLayerPicture;
     private SkiaSharp.SKPicture _dynamicAnimationLayerPicture;
 
+    /// <summary>
+    /// Gets a value indicating whether animation layer caching is in use for this SVG instance.
+    /// </summary>
     public bool UsesAnimationLayerCaching { get; private set; }
 
     private bool TryInitializeAnimationLayerCaching(SvgSceneDocument sceneDocument)

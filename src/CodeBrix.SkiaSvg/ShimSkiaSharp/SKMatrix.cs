@@ -399,6 +399,7 @@ public struct SKMatrix : IEquatable<SKMatrix>
         return true;
     }
 
+    /// <inheritdoc />
     public bool Equals(SKMatrix other)
     {
         // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -411,8 +412,10 @@ public struct SKMatrix : IEquatable<SKMatrix>
         // ReSharper restore CompareOfFloatsByEqualityOperator
     }
 
+    /// <inheritdoc />
     public override bool Equals(object obj) => obj is SKMatrix other && Equals(other);
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         return ScaleX.GetHashCode() + SkewY.GetHashCode() +
@@ -447,6 +450,7 @@ public struct SKMatrix : IEquatable<SKMatrix>
         return value1.PreConcat(value2);
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
         return FormattableString.Invariant($"{ScaleX}, {SkewX}, {TransX}, {SkewY}, {ScaleY}, {TransY}");

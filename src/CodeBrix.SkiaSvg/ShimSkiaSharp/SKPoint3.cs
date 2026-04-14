@@ -38,6 +38,7 @@ public readonly struct SKPoint3
         Z = z;
     }
 
+    /// <inheritdoc />
     public override string ToString()
         => FormattableString.Invariant($"{X}, {Y}, {Z}");
 }

@@ -132,6 +132,7 @@ public struct SKRect
             Math.Max(a.Bottom, b.Bottom));
     }
 
+    /// <inheritdoc />
     public override string ToString()
         => FormattableString.Invariant($"{Left}, {Top}, {Width}, {Height}");
 }

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>
+/// Provides utilities for determining animation invalidation scope based on SVG attribute inheritance.
+/// </summary>
 public static class SvgAnimationInvalidation
 {
     private static readonly HashSet<string> s_inheritedAttributes = new(StringComparer.Ordinal)
@@ -62,6 +65,11 @@ public static class SvgAnimationInvalidation
         "x-height"
     };
 
+    /// <summary>
+    /// Determines whether the specified SVG attribute is inherited by descendant elements.
+    /// </summary>
+    /// <param name="attributeName">The name of the SVG attribute to check.</param>
+    /// <returns><see langword="true"/> if the attribute is inherited and affects the descendant subtree; otherwise, <see langword="false"/>.</returns>
     public static bool AffectsDescendantSubtree(string attributeName)
     {
         return !string.IsNullOrWhiteSpace(attributeName) &&

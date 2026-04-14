@@ -51,6 +51,7 @@ public readonly struct SKColor
             color.Alpha * (1 / 255.0f));
     }
 
+    /// <inheritdoc />
     public override string ToString()
         => FormattableString.Invariant($"{Red}, {Green}, {Blue}, {Alpha}");
 }

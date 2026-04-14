@@ -5,8 +5,14 @@ using System;
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>
+/// Provides data for the <see cref="SKSvg"/> draw event.
+/// </summary>
 public class SKSvgDrawEventArgs : EventArgs
 {
+    /// <summary>
+    /// Gets the SkiaSharp canvas on which drawing is performed.
+    /// </summary>
     public SkiaSharp.SKCanvas Canvas { get; }
 
     internal SKSvgDrawEventArgs(SkiaSharp.SKCanvas canvas)

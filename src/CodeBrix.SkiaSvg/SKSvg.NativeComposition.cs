@@ -16,6 +16,9 @@ public partial class SKSvg
     private SKRect _nativeCompositionSourceBounds;
     private DrawAttributes _nativeCompositionIgnoreAttributes;
 
+    /// <summary>
+    /// Gets a value indicating whether this SVG supports native composition rendering.
+    /// </summary>
     public bool SupportsNativeComposition
     {
         get
@@ -24,6 +27,11 @@ public partial class SKSvg
         }
     }
 
+    /// <summary>
+    /// Attempts to create a native composition scene containing all layers of the SVG.
+    /// </summary>
+    /// <param name="scene">When this method returns, contains the native composition scene if successful.</param>
+    /// <returns><see langword="true"/> if the scene was created successfully; otherwise, <see langword="false"/>.</returns>
     public bool TryCreateNativeCompositionScene(out SvgNativeCompositionScene scene)
     {
         scene = null;
@@ -57,6 +65,11 @@ public partial class SKSvg
         return true;
     }
 
+    /// <summary>
+    /// Attempts to create a native composition frame containing only the animated layers.
+    /// </summary>
+    /// <param name="frame">When this method returns, contains the native composition frame if successful.</param>
+    /// <returns><see langword="true"/> if the frame was created successfully; otherwise, <see langword="false"/>.</returns>
     public bool TryCreateNativeCompositionFrame(out SvgNativeCompositionFrame frame)
     {
         frame = null;
