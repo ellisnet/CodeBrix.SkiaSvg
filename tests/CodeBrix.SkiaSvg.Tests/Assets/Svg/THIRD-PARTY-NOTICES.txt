@@ -1,0 +1,112 @@
+THIRD-PARTY SVG TEST ASSET NOTICES AND INFORMATION
+
+The SVG files in this directory (and the sibling resources/ directory) are
+used exclusively as test assets for the CodeBrix.SkiaSvg.Tests project. They
+are not included in any NuGet package or redistributable output of the
+CodeBrix.SkiaSvg library.
+
+================================================================================
+
+1. HitTest SVG files (from the Svg.Skia project)
+   Files: HitTest.svg, HitTestArc.svg, HitTestCubic.svg, HitTestLine.svg,
+          HitTestQuad.svg, HitTestText.svg
+   Source: https://github.com/wieslawsoltes/Svg.Skia (tests/Tests directory)
+   Copyright: Copyright (c) 2020 Wieslaw Soltes
+   License: MIT
+
+   ---------------------------------------------------------------------------
+   MIT License
+
+   Copyright (c) 2020 Wieslaw Soltes
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+   ---------------------------------------------------------------------------
+
+================================================================================
+
+2. W3C SVG 1.1 Test Suite files
+   Files: painting-marker-04-f.svg, painting-marker-05-f.svg,
+          painting-marker-07-f.svg, painting-marker-properties-01-f.svg,
+          text-tspan-02-b.svg, struct-frag-04-t.svg, animate-elem-38-t.svg,
+          ../resources/SVGFreeSans.svg
+   Source: https://www.w3.org/Graphics/SVG/Test/20110816/
+   Copyright: Copyright 2009 World Wide Web Consortium, (Massachusetts
+              Institute of Technology, European Research Consortium for
+              Informatics and Mathematics (ERCIM), Keio University).
+              All Rights Reserved.
+   License: W3C Software and Document License
+            See http://www.w3.org/Consortium/Legal/
+
+   These test files are part of the W3C SVG 1.1 Second Edition Test Suite
+   and are distributed under the W3C Software and Document License, which
+   permits redistribution and use in source and binary forms, with or
+   without modification, provided that the following conditions are met:
+
+   - Redistributions must retain the above copyright notice.
+   - The name of W3C may not be used to endorse or promote products
+     derived from this software without specific prior written permission.
+
+   ---------------------------------------------------------------------------
+   W3C SOFTWARE AND DOCUMENT NOTICE AND LICENSE
+
+   This work is being provided by the copyright holders under the following
+   license.
+
+   License: By obtaining and/or copying this work, you (the licensee) agree
+   that you have read, understood, and will comply with the following terms
+   and conditions.
+
+   Permission to copy, modify, and distribute this work, with or without
+   modification, for any purpose and without fee or royalty is hereby
+   granted, provided that you include the following on ALL copies of the
+   work or portions thereof, including modifications:
+
+   - The full text of this NOTICE in a location viewable to users of the
+     redistributed or derivative work.
+   - Any pre-existing intellectual property disclaimers, notices, or terms
+     and conditions.
+
+   THIS SOFTWARE AND DOCUMENT IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS
+   MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING,
+   BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+   PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF
+   THE DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION
+   OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS,
+   TRADEMARKS OR OTHER RIGHTS.
+   ---------------------------------------------------------------------------
+
+================================================================================
+
+3. resvg test SVG file
+   File: e-mask-023.svg
+   Source: https://github.com/nicknamefordev/resvg (tests/svg directory)
+   Copyright: Copyright resvg contributors
+   License: Mozilla Public License 2.0 (MPL-2.0)
+
+   This file is from the resvg project and is licensed under the Mozilla
+   Public License, Version 2.0. A copy of the MPL-2.0 can be obtained at:
+   http://mozilla.org/MPL/2.0/
+
+   As permitted by MPL-2.0 Section 3.3, this file is included as part of a
+   Larger Work (the CodeBrix.SkiaSvg test suite) and is used solely for
+   testing purposes.
+
+================================================================================
+
+END OF THIRD-PARTY SVG TEST ASSET NOTICES AND INFORMATION

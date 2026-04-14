@@ -1,0 +1,47 @@
+THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
+
+CodeBrix.SkiaSvg incorporates material from the project(s) listed below
+(collectively, "Third Party Code"). Jeremy Ellis and contributors are not the
+original author(s) of the Third Party Code. The original copyright notice and
+the license, under which Jeremy Ellis and contributors received such Third Party
+Code, are set forth below. Such license and notices are provided for
+informational purposes only. Jeremy Ellis and contributors license the
+CodeBrix.SkiaSvg project to you under the terms set forth in the LICENSE file,
+which is located at the root of this repository.
+
+If you have any questions about any Third Party Code noticed here, or if you
+believe that any Third Party Code noticed here has been included in
+CodeBrix.SkiaSvg in error, please open a new issue at:
+https://github.com/ellisnet/CodeBrix.SkiaSvg/issues
+
+================================================================================
+
+1.  Svg.Skia v4.2.0 (https://github.com/wieslawsoltes/Svg.Skia)
+
+    Copyright (c) 2020 Wieslaw Soltes
+
+    License: MIT License
+
+    The MIT License (MIT)
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+================================================================================
+
+END OF THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
