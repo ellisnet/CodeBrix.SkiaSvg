@@ -1,5 +1,3 @@
-#pragma warning disable CS0618 // Tests exercise obsolete SkiaSharp text/font/filter APIs that will be migrated during CS0618 cleanup
-
 using System.Collections.Generic;
 using CodeBrix.SkiaSvg.ShimSkiaSharp;
 using Xunit;
@@ -7,10 +5,14 @@ using Xunit;
 namespace CodeBrix.SkiaSvg.Tests;
 
 /// <summary>
-/// Tests covering the SkiaSharp text, font, and filter-quality APIs that are
-/// currently marked obsolete (CS0618). These tests lock down observable behavior
-/// so the upcoming migration to the modern <c>SKFont</c> / <c>SKTextBlob</c> surface
-/// can be validated against a known baseline.
+/// Tests covering the SkiaSharp text, font, and filter-quality API surface after the
+/// CS0618 migration. Text and font properties (TextSize, Typeface, SubpixelText,
+/// LcdRenderText) are now on <c>SKFont</c> via <c>ToSKFont()</c>, and filter quality
+/// is represented as <c>SKSamplingOptions</c> via <c>ToSKSamplingOptions()</c>.
+/// <c>ToSKPaint()</c> continues to carry visual/stroke properties only.
+///
+/// These tests originally locked down the pre-migration baseline (properties on
+/// <c>SKPaint</c>) and were updated to verify the new locations after the migration.
 /// </summary>
 public class SkiaModelTextApiTests
 {
@@ -26,11 +28,33 @@ public class SkiaModelTextApiTests
     }
 
     // ---------------------------------------------------------------
-    // 1. ToSKPaint transfers all text-related properties
+    // 1. ToSKFont transfers all text-related properties
+    // ---------------------------------------------------------------
+    //
+    // CS0618 MIGRATION NOTE (SkiaSharp 3.x):
+    //
+    // Previously, text-related properties (TextSize, TextAlign, Typeface,
+    // LcdRenderText, SubpixelText, TextEncoding) were all set on SKPaint by
+    // ToSKPaint(). After the CS0618 migration, these properties have been
+    // moved to SKFont, which is now created by the new ToSKFont() method.
+    //
+    // Property mapping from old SKPaint to new SKFont:
+    //   SKPaint.TextSize       → SKFont.Size
+    //   SKPaint.Typeface       → SKFont.Typeface
+    //   SKPaint.SubpixelText   → SKFont.Subpixel
+    //   SKPaint.LcdRenderText  → SKFont.Edging (SubpixelAntialias when true)
+    //
+    // SKPaint.TextAlign is no longer stored on either object — it is passed
+    // directly to SkiaSharp canvas draw methods as a separate parameter.
+    //
+    // SKPaint.TextEncoding has no SKFont equivalent; SkiaSharp 3.x always
+    // uses UTF-8 internally.
+    //
+    // ToSKPaint() still carries visual properties (Color, Style, Shader, etc.).
     // ---------------------------------------------------------------
 
     [Fact]
-    public void ToSKPaint_TransfersTextProperties()
+    public void ToSKFont_TransfersTextProperties()
     {
         var model = CreateModel();
         var shimPaint = new SKPaint
@@ -47,37 +71,79 @@ public class SkiaModelTextApiTests
                 SKFontStyleSlant.Upright)
         };
 
-        using var skPaint = model.ToSKPaint(shimPaint);
+        using var font = model.ToSKFont(shimPaint);
 
-        Assert.NotNull(skPaint);
-        Assert.Equal(24f, skPaint.TextSize);
-        Assert.Equal(SkiaSharp.SKTextAlign.Center, skPaint.TextAlign);
-        Assert.True(skPaint.LcdRenderText);
-        Assert.True(skPaint.SubpixelText);
-        Assert.Equal(SkiaSharp.SKTextEncoding.Utf16, skPaint.TextEncoding);
-        Assert.NotNull(skPaint.Typeface);
+        Assert.NotNull(font);
+        // TextSize is now SKFont.Size
+        Assert.Equal(24f, font.Size);
+        // Typeface is now on SKFont
+        Assert.NotNull(font.Typeface);
+        // SubpixelText is now SKFont.Subpixel
+        Assert.True(font.Subpixel);
+        // LcdRenderText=true maps to SKFontEdging.SubpixelAntialias
+        Assert.Equal(SkiaSharp.SKFontEdging.SubpixelAntialias, font.Edging);
     }
 
     // ---------------------------------------------------------------
-    // 2. ToSKPaint maps all SKFilterQuality values correctly
+    // 2. ToSKSamplingOptions maps all SKFilterQuality values correctly
+    // ---------------------------------------------------------------
+    //
+    // CS0618 MIGRATION NOTE (SkiaSharp 3.x):
+    //
+    // Previously, filter quality was set as SKPaint.FilterQuality by
+    // ToSKPaint(). SkiaSharp 3.x deprecated FilterQuality in favor of
+    // SKSamplingOptions, which provides finer-grained control over image
+    // sampling. The new ToSKSamplingOptions() method performs this mapping:
+    //
+    //   SKFilterQuality.None   → SKSamplingOptions(SKFilterMode.Nearest)
+    //   SKFilterQuality.Low    → SKSamplingOptions(SKFilterMode.Linear)
+    //   SKFilterQuality.Medium → SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear)
+    //   SKFilterQuality.High   → SKSamplingOptions(SKCubicResampler.Mitchell)
+    //
+    // ToSKPaint() no longer sets FilterQuality on the returned SKPaint.
+    // Callers that need sampling options should use ToSKSamplingOptions()
+    // and pass the result to canvas draw methods (e.g., DrawImage).
     // ---------------------------------------------------------------
 
-    [Theory]
-    [InlineData(SKFilterQuality.None, SkiaSharp.SKFilterQuality.None)]
-    [InlineData(SKFilterQuality.Low, SkiaSharp.SKFilterQuality.Low)]
-    [InlineData(SKFilterQuality.Medium, SkiaSharp.SKFilterQuality.Medium)]
-    [InlineData(SKFilterQuality.High, SkiaSharp.SKFilterQuality.High)]
-    public void ToSKPaint_AppliesFilterQualityMapping(
-        SKFilterQuality shimQuality,
-        SkiaSharp.SKFilterQuality expectedSkiaQuality)
+    [Fact]
+    public void ToSKSamplingOptions_None_UsesNearestFilter()
     {
         var model = CreateModel();
-        var shimPaint = new SKPaint { FilterQuality = shimQuality };
+        var options = model.ToSKSamplingOptions(SKFilterQuality.None);
 
-        using var skPaint = model.ToSKPaint(shimPaint);
+        Assert.False(options.UseCubic);
+        Assert.Equal(SkiaSharp.SKFilterMode.Nearest, options.Filter);
+    }
 
-        Assert.NotNull(skPaint);
-        Assert.Equal(expectedSkiaQuality, skPaint.FilterQuality);
+    [Fact]
+    public void ToSKSamplingOptions_Low_UsesLinearFilter()
+    {
+        var model = CreateModel();
+        var options = model.ToSKSamplingOptions(SKFilterQuality.Low);
+
+        Assert.False(options.UseCubic);
+        Assert.Equal(SkiaSharp.SKFilterMode.Linear, options.Filter);
+    }
+
+    [Fact]
+    public void ToSKSamplingOptions_Medium_UsesLinearFilterWithMipmap()
+    {
+        var model = CreateModel();
+        var options = model.ToSKSamplingOptions(SKFilterQuality.Medium);
+
+        Assert.False(options.UseCubic);
+        Assert.Equal(SkiaSharp.SKFilterMode.Linear, options.Filter);
+        Assert.Equal(SkiaSharp.SKMipmapMode.Linear, options.Mipmap);
+    }
+
+    [Fact]
+    public void ToSKSamplingOptions_High_UsesCubicResampler()
+    {
+        var model = CreateModel();
+        var options = model.ToSKSamplingOptions(SKFilterQuality.High);
+
+        // High quality uses Mitchell cubic resampler instead of linear filtering
+        Assert.True(options.UseCubic);
     }
 
     // ---------------------------------------------------------------
@@ -407,5 +473,3 @@ public class SkiaModelTextApiTests
         Assert.True(hasDrawnPixels, "DrawTextOnPath should have rendered visible text pixels");
     }
 }
-
-#pragma warning restore CS0618

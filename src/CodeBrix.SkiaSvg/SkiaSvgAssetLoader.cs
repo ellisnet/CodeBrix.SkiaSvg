@@ -59,6 +59,7 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
             MatchCharacter(preferredFamily, weight, width, slant, codepoint);
 
         using var runningPaint = _skiaModel.ToSKPaint(paintPreferredTypeface);
+        using var runningFont = _skiaModel.ToSKFont(paintPreferredTypeface);
         if (runningPaint is null)
         {
             return ret;
@@ -71,23 +72,23 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
         {
             var currentTypefaceText = text.Substring(currentTypefaceStartIndex, i - currentTypefaceStartIndex);
 
-            ret.Add(new(currentTypefaceText, _skiaModel.GetTextAdvance(currentTypefaceText, runningPaint),
-                runningPaint.Typeface is null
+            ret.Add(new(currentTypefaceText, _skiaModel.GetTextAdvance(currentTypefaceText, runningPaint, runningFont),
+                runningFont.Typeface is null
                     ? null
                     : ShimSkiaSharp.SKTypeface.FromFamilyName(
-                        runningPaint.Typeface.FamilyName,
+                        runningFont.Typeface.FamilyName,
                         // SkiaSharp provides int properties here. Let's just assume our
                         // ShimSkiaSharp defines the same values as SkiaSharp and convert directly
-                        (ShimSkiaSharp.SKFontStyleWeight)runningPaint.Typeface.FontWeight,
-                        (ShimSkiaSharp.SKFontStyleWidth)runningPaint.Typeface.FontWidth,
-                        (ShimSkiaSharp.SKFontStyleSlant)runningPaint.Typeface.FontSlant)
+                        (ShimSkiaSharp.SKFontStyleWeight)runningFont.Typeface.FontWeight,
+                        (ShimSkiaSharp.SKFontStyleWidth)runningFont.Typeface.FontWidth,
+                        (ShimSkiaSharp.SKFontStyleSlant)runningFont.Typeface.FontSlant)
             ));
         }
 
         for (; i < text.Length; i++)
         {
             var typeface = matchCharacter(char.ConvertToUtf32(text, i));
-            if (runningPaint.Typeface is { } currentTypeface &&
+            if (runningFont.Typeface is { } currentTypeface &&
                 char.IsWhiteSpace(text, i))
             {
                 // Keep whitespace in the active span so bidi/shaping stays attached to the
@@ -97,18 +98,18 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
 
             if (i == 0)
             {
-                runningPaint.Typeface = typeface;
+                runningFont.Typeface = typeface;
             }
-            else if (runningPaint.Typeface is null
-                     && typeface is { } || runningPaint.Typeface is { }
-                     && typeface is null || runningPaint.Typeface is { } l
+            else if (runningFont.Typeface is null
+                     && typeface is { } || runningFont.Typeface is { }
+                     && typeface is null || runningFont.Typeface is { } l
                      && typeface is { } r
                      && (l.FamilyName, l.FontWeight, l.FontWidth, l.FontSlant) != (r.FamilyName, r.FontWeight, r.FontWidth, r.FontSlant))
             {
                 YieldCurrentTypefaceText();
 
                 currentTypefaceStartIndex = i;
-                runningPaint.Typeface = typeface;
+                runningFont.Typeface = typeface;
             }
 
             if (char.IsHighSurrogate(text[i]))
@@ -166,8 +167,8 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
             candidates.Add(candidate);
         }
 
-        using var preferredPaint = _skiaModel.ToSKPaint(paintPreferredTypeface);
-        AddCandidate(preferredPaint?.Typeface);
+        using var preferredFont = _skiaModel.ToSKFont(paintPreferredTypeface);
+        AddCandidate(preferredFont?.Typeface);
 
         var spans = FindTypefaces(text, paintPreferredTypeface);
         for (var i = 0; i < spans.Count; i++)
@@ -196,13 +197,13 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
     /// <inheritdoc />
     public ShimSkiaSharp.SKFontMetrics GetFontMetrics(ShimSkiaSharp.SKPaint paint)
     {
-        using var skPaint = _skiaModel.ToSKPaint(paint);
-        if (skPaint is null)
+        using var font = _skiaModel.ToSKFont(paint);
+        if (font is null)
         {
             return default;
         }
 
-        skPaint.GetFontMetrics(out var skMetrics);
+        font.GetFontMetrics(out var skMetrics);
         return new ShimSkiaSharp.SKFontMetrics
         {
             Top = skMetrics.Top,
@@ -221,15 +222,16 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
     public float MeasureText(string text, ShimSkiaSharp.SKPaint paint, ref ShimSkiaSharp.SKRect bounds)
     {
         var skPaint = GetCachedPaint(paint);
-        if (skPaint is null || text is null)
+        using var font = _skiaModel.ToSKFont(paint);
+        if (skPaint is null || font is null || text is null)
         {
             bounds = default;
             return 0f;
         }
 
         var skBounds = new SkiaSharp.SKRect();
-        skPaint.MeasureText(text, ref skBounds);
-        var width = _skiaModel.GetTextAdvance(text, skPaint);
+        font.MeasureText(text, out skBounds, skPaint);
+        var width = _skiaModel.GetTextAdvance(text, skPaint, font);
         bounds = new ShimSkiaSharp.SKRect(skBounds.Left, skBounds.Top, skBounds.Right, skBounds.Bottom);
         return width;
     }
@@ -249,13 +251,13 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
     /// <inheritdoc />
     public ShimSkiaSharp.SKPath GetTextPath(string text, ShimSkiaSharp.SKPaint paint, float x, float y)
     {
-        var skPaint = GetCachedPaint(paint);
-        if (skPaint is null || text is null)
+        using var font = _skiaModel.ToSKFont(paint);
+        if (font is null || text is null)
         {
             return null;
         }
 
-        using var skPath = skPaint.GetTextPath(text, x, y);
+        using var skPath = font.GetTextPath(text, new SkiaSharp.SKPoint(x, y));
         return _skiaModel.FromSKPath(skPath);
     }
 

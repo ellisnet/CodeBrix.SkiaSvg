@@ -1325,18 +1325,18 @@ public partial class SkiaModel
         };
     }
 
-    /// <summary>Converts a shim <see cref="SKFilterQuality"/> to a SkiaSharp filter quality.</summary>
+    /// <summary>Converts a shim <see cref="SKFilterQuality"/> to SkiaSharp sampling options.</summary>
     /// <param name="filterQuality">The shim filter quality.</param>
-    /// <returns>The corresponding SkiaSharp filter quality.</returns>
-    public SkiaSharp.SKFilterQuality ToSKFilterQuality(SKFilterQuality filterQuality)
+    /// <returns>The corresponding SkiaSharp sampling options.</returns>
+    public SkiaSharp.SKSamplingOptions ToSKSamplingOptions(SKFilterQuality filterQuality)
     {
         return filterQuality switch
         {
-            SKFilterQuality.None => SkiaSharp.SKFilterQuality.None,
-            SKFilterQuality.Low => SkiaSharp.SKFilterQuality.Low,
-            SKFilterQuality.Medium => SkiaSharp.SKFilterQuality.Medium,
-            SKFilterQuality.High => SkiaSharp.SKFilterQuality.High,
-            _ => SkiaSharp.SKFilterQuality.None
+            SKFilterQuality.None => new SkiaSharp.SKSamplingOptions(SkiaSharp.SKFilterMode.Nearest),
+            SKFilterQuality.Low => new SkiaSharp.SKSamplingOptions(SkiaSharp.SKFilterMode.Linear),
+            SKFilterQuality.Medium => new SkiaSharp.SKSamplingOptions(SkiaSharp.SKFilterMode.Linear, SkiaSharp.SKMipmapMode.Linear),
+            SKFilterQuality.High => new SkiaSharp.SKSamplingOptions(SkiaSharp.SKCubicResampler.Mitchell),
+            _ => new SkiaSharp.SKSamplingOptions(SkiaSharp.SKFilterMode.Nearest)
         };
     }
 
@@ -1353,9 +1353,6 @@ public partial class SkiaModel
         var style = ToSKPaintStyle(paint.Style);
         var strokeCap = ToSKStrokeCap(paint.StrokeCap);
         var strokeJoin = ToSKStrokeJoin(paint.StrokeJoin);
-        var textAlign = ToSKTextAlign(paint.TextAlign);
-        var typeface = ToSKTypeface(paint.Typeface);
-        var textEncoding = ToSKTextEncoding(paint.TextEncoding);
         var color = paint.Color is null
             ? SkiaSharp.SKColor.Empty :
             ToSKColor(paint.Color.Value);
@@ -1364,9 +1361,8 @@ public partial class SkiaModel
         var imageFilter = ToSKImageFilter(paint.ImageFilter);
         var pathEffect = ToSKPathEffect(paint.PathEffect);
         var blendMode = ToSKBlendMode(paint.BlendMode);
-        var filterQuality = ToSKFilterQuality(paint.FilterQuality);
 
-        var skPaint = new SkiaSharp.SKPaint
+        return new SkiaSharp.SKPaint
         {
             Style = style,
             IsAntialias = paint.IsAntialias,
@@ -1374,43 +1370,55 @@ public partial class SkiaModel
             StrokeCap = strokeCap,
             StrokeJoin = strokeJoin,
             StrokeMiter = paint.StrokeMiter,
-            TextSize = paint.TextSize,
-            TextAlign = textAlign,
-            Typeface = typeface,
-            LcdRenderText = paint.LcdRenderText,
-            SubpixelText = paint.SubpixelText,
-            TextEncoding = textEncoding,
             Color = color,
             Shader = shader,
             ColorFilter = colorFilter,
             ImageFilter = imageFilter,
             PathEffect = pathEffect,
-            BlendMode = blendMode,
-            FilterQuality = filterQuality
+            BlendMode = blendMode
         };
-
-        ApplyTypefaceAdjustments(paint, skPaint);
-
-        return skPaint;
     }
 
-    private void ApplyTypefaceAdjustments(ShimSkiaSharp.SKPaint sourcePaint, SkiaSharp.SKPaint targetPaint)
+    /// <summary>Creates a SkiaSharp <see cref="SkiaSharp.SKFont"/> from a shim <see cref="SKPaint"/>.</summary>
+    /// <param name="paint">The shim paint containing text properties.</param>
+    /// <returns>The corresponding SkiaSharp font, or a default font when <paramref name="paint"/> is <c>null</c>.</returns>
+    public SkiaSharp.SKFont ToSKFont(SKPaint paint)
     {
-        if (sourcePaint.Typeface is null || targetPaint.Typeface is null)
+        if (paint is null)
+        {
+            return new SkiaSharp.SKFont();
+        }
+
+        var typeface = ToSKTypeface(paint.Typeface);
+        var font = new SkiaSharp.SKFont(typeface, paint.TextSize)
+        {
+            Subpixel = paint.SubpixelText,
+            Edging = paint.LcdRenderText
+                ? SkiaSharp.SKFontEdging.SubpixelAntialias
+                : SkiaSharp.SKFontEdging.Antialias
+        };
+
+        ApplyTypefaceAdjustments(paint, font);
+        return font;
+    }
+
+    private void ApplyTypefaceAdjustments(ShimSkiaSharp.SKPaint sourcePaint, SkiaSharp.SKFont targetFont)
+    {
+        if (sourcePaint.Typeface is null || targetFont.Typeface is null)
         {
             return;
         }
 
         var desiredWeight = (int)ToSKFontStyleWeight(sourcePaint.Typeface.FontWeight);
-        if (targetPaint.Typeface.FontWeight < desiredWeight)
+        if (targetFont.Typeface.FontWeight < desiredWeight)
         {
-            targetPaint.FakeBoldText = true;
+            targetFont.Embolden = true;
         }
     }
 
     private SkiaSharp.SKTextBlob GetCachedPositionedTextBlob(
         DrawTextBlobCanvasCommand command,
-        SkiaSharp.SKPaint paint)
+        SkiaSharp.SKFont font)
     {
         var textBlob = command.TextBlob;
         if (textBlob?.Points is null)
@@ -1418,7 +1426,7 @@ public partial class SkiaModel
             return null;
         }
 
-        var signature = new FontSignature(paint);
+        var signature = new FontSignature(font);
         lock (_positionedTextCacheLock)
         {
             PositionedTextCache cached = null;
@@ -1439,12 +1447,6 @@ public partial class SkiaModel
                 }
 
                 _positionedTextCache.Remove(command);
-            }
-
-            using var font = paint.ToFont();
-            if (font is null)
-            {
-                return null;
             }
 
             var points = ToSKPoints(textBlob.Points);
@@ -1870,7 +1872,7 @@ public partial class SkiaModel
             case SetMatrixCanvasCommand setMatrixCanvasCommand:
                 {
                     var matrix = ToSKMatrix(setMatrixCanvasCommand.DeltaMatrix);
-                    skCanvas.Concat(ref matrix);
+                    skCanvas.Concat(in matrix);
                     break;
                 }
             case SaveLayerCanvasCommand saveLayerCanvasCommand:
@@ -1904,7 +1906,8 @@ public partial class SkiaModel
                             var source = ToSKRect(drawImageCanvasCommand.Source);
                             var dest = ToSKRect(drawImageCanvasCommand.Dest);
                             var paint = ToSKPaint(drawImageCanvasCommand.Paint);
-                            skCanvas.DrawImage(image, source, dest, paint);
+                            var sampling = ToSKSamplingOptions(drawImageCanvasCommand.Paint?.FilterQuality ?? SKFilterQuality.None);
+                            skCanvas.DrawImage(image, source, dest, sampling, paint);
                         }
                     }
                     break;
@@ -1949,7 +1952,8 @@ public partial class SkiaModel
                             break;
                         }
 
-                        var textBlob = GetCachedPositionedTextBlob(drawPositionedTextCanvasCommand, paint);
+                        using var font = ToSKFont(sourcePaint);
+                        var textBlob = GetCachedPositionedTextBlob(drawPositionedTextCanvasCommand, font);
                         if (textBlob is not null)
                         {
                             skCanvas.DrawText(textBlob, 0, 0, paint);
@@ -1972,9 +1976,11 @@ public partial class SkiaModel
                             break;
                         }
 
-                        if (!TryDrawShapedText(skCanvas, text, x, y, paint))
+                        using var font = ToSKFont(drawTextCanvasCommand.Paint);
+                        var textAlign = ToSKTextAlign(drawTextCanvasCommand.Paint.TextAlign);
+                        if (!TryDrawShapedText(skCanvas, text, x, y, paint, font, textAlign))
                         {
-                            skCanvas.DrawText(text, x, y, paint);
+                            skCanvas.DrawText(text, x, y, textAlign, font, paint);
                         }
                     }
                     break;
@@ -1990,7 +1996,9 @@ public partial class SkiaModel
                         var paint = wireframe
                             ? ToWireframePaint(drawTextOnPathCanvasCommand.Paint)
                             : ToSKPaint(drawTextOnPathCanvasCommand.Paint);
-                        skCanvas.DrawTextOnPath(text, path, hOffset, vOffset, paint);
+                        using var font = ToSKFont(drawTextOnPathCanvasCommand.Paint);
+                        var textAlign = ToSKTextAlign(drawTextOnPathCanvasCommand.Paint.TextAlign);
+                        skCanvas.DrawTextOnPath(text, path, hOffset, vOffset, textAlign, font, paint);
                     }
                     break;
                 }
@@ -2018,14 +2026,10 @@ public partial class SkiaModel
     {
         var strokeCap = paint is null ? SkiaSharp.SKStrokeCap.Butt : ToSKStrokeCap(paint.StrokeCap);
         var strokeJoin = paint is null ? SkiaSharp.SKStrokeJoin.Miter : ToSKStrokeJoin(paint.StrokeJoin);
-        var textAlign = paint is null ? SkiaSharp.SKTextAlign.Left : ToSKTextAlign(paint.TextAlign);
-        var typeface = paint is null ? null : ToSKTypeface(paint.Typeface);
-        var textEncoding = paint is null ? SkiaSharp.SKTextEncoding.Utf8 : ToSKTextEncoding(paint.TextEncoding);
         var colorFilter = paint is null ? null : ToSKColorFilter(paint.ColorFilter);
         var imageFilter = paint is null ? null : ToSKImageFilter(paint.ImageFilter);
         var pathEffect = paint is null ? null : ToSKPathEffect(paint.PathEffect);
         var blendMode = paint is null ? SkiaSharp.SKBlendMode.SrcOver : ToSKBlendMode(paint.BlendMode);
-        var filterQuality = paint is null ? SkiaSharp.SKFilterQuality.None : ToSKFilterQuality(paint.FilterQuality);
 
         return new SkiaSharp.SKPaint
         {
@@ -2035,18 +2039,11 @@ public partial class SkiaModel
             StrokeCap = strokeCap,
             StrokeJoin = strokeJoin,
             StrokeMiter = paint?.StrokeMiter ?? 4,
-            TextSize = paint?.TextSize ?? 0,
-            TextAlign = textAlign,
-            Typeface = typeface,
-            LcdRenderText = paint?.LcdRenderText ?? false,
-            SubpixelText = paint?.SubpixelText ?? false,
-            TextEncoding = textEncoding,
             Color = new SkiaSharp.SKColor(128, 128, 128, 255),
             ColorFilter = colorFilter,
             ImageFilter = imageFilter,
             PathEffect = pathEffect,
-            BlendMode = blendMode,
-            FilterQuality = filterQuality
+            BlendMode = blendMode
         };
     }
 

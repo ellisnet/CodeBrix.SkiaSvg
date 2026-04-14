@@ -1,5 +1,3 @@
-#pragma warning disable CS0618 // Typeface and FakeBoldText are deprecated on SKPaint; shim keeps the legacy surface for compatibility
-
 using CodeBrix.SkiaSvg.ShimSkiaSharp;
 using CodeBrix.SkiaSvg;
 using Xunit;
@@ -34,6 +32,18 @@ public class Issue405Tests
             "Expected resolved typeface to be semi-bold or heavier.");
     }
 
+    // ----------------------------------------------------------------------------------
+    // CS0618 MIGRATION NOTE (SkiaSharp 3.x):
+    //
+    // Previously, ApplyTypefaceAdjustments() set paint.FakeBoldText = true on the
+    // SKPaint when the resolved typeface weight was lighter than the desired weight.
+    // After the CS0618 migration, font/text properties were moved from SKPaint to
+    // SKFont. FakeBoldText has been replaced by SKFont.Embolden, and the adjustment
+    // is now applied via model.ToSKFont() instead of model.ToSKPaint().
+    //
+    // This test was updated to call model.ToSKFont() and assert font.Embolden rather
+    // than localPaint.FakeBoldText.
+    // ----------------------------------------------------------------------------------
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -50,14 +60,16 @@ public class Issue405Tests
                 SKFontStyleSlant.Upright)
         };
 
-        using var localPaint = model.ToSKPaint(paint);
-        Assert.NotNull(localPaint);
+        // ToSKFont now carries text/font properties, including the Embolden flag
+        // that replaced FakeBoldText on SKPaint.
+        using var font = model.ToSKFont(paint);
+        Assert.NotNull(font);
 
         var desiredWeight = (int)SkiaSharp.SKFontStyleWeight.ExtraBlack;
-        var actualWeight = localPaint!.Typeface?.FontWeight ?? 0;
+        var actualWeight = font!.Typeface?.FontWeight ?? 0;
         var shouldFakeBold = actualWeight < desiredWeight;
 
-        Assert.Equal(shouldFakeBold, localPaint.FakeBoldText);
+        Assert.Equal(shouldFakeBold, font.Embolden);
     }
 
     [Theory]
@@ -77,4 +89,3 @@ public class Issue405Tests
     }
 }
 
-#pragma warning restore CS0618

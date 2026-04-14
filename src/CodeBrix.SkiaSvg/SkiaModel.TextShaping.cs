@@ -20,19 +20,16 @@ public partial class SkiaModel
         string text,
         float x,
         float y,
-        SkiaSharp.SKPaint paint)
+        SkiaSharp.SKPaint paint,
+        SkiaSharp.SKFont font,
+        SkiaSharp.SKTextAlign textAlign)
     {
-        if (!TryShapeText(text, x, y, paint, rightToLeft: null, out var result))
+        if (!TryShapeText(text, x, y, font, rightToLeft: null, out var result))
         {
             return false;
         }
 
         using var builder = new SkiaSharp.SKTextBlobBuilder();
-        using var font = paint.ToFont();
-        if (font is null)
-        {
-            return false;
-        }
 
         var glyphs = new ushort[result.Codepoints.Length];
         for (var i = 0; i < result.Codepoints.Length; i++)
@@ -47,7 +44,7 @@ public partial class SkiaModel
             return false;
         }
 
-        var xOffset = paint.TextAlign switch
+        var xOffset = textAlign switch
         {
             SkiaSharp.SKTextAlign.Center => -(result.Width * 0.5f),
             SkiaSharp.SKTextAlign.Right => -result.Width,
@@ -58,45 +55,51 @@ public partial class SkiaModel
         return true;
     }
 
-    internal float GetTextAdvance(string text, SkiaSharp.SKPaint paint)
+    internal float GetTextAdvance(string text, SkiaSharp.SKPaint paint, SkiaSharp.SKFont font)
     {
-        if (TryCreateStableMeasurePaint(paint, out var stablePaint, out var scaleDown))
+        if (TryCreateStableMeasureFont(font, out var stableFont, out var scaleDown))
         {
-            using (stablePaint)
+            using (stableFont)
             {
-                if (TryShapeText(text, 0f, 0f, stablePaint, rightToLeft: null, out var stableResult))
+                if (TryShapeText(text, 0f, 0f, stableFont, rightToLeft: null, out var stableResult))
                 {
                     return stableResult.Width * scaleDown;
                 }
 
-                return stablePaint.MeasureText(text) * scaleDown;
+                return stableFont.MeasureText(text, paint) * scaleDown;
             }
         }
 
-        if (TryShapeText(text, 0f, 0f, paint, rightToLeft: null, out var result))
+        if (TryShapeText(text, 0f, 0f, font, rightToLeft: null, out var result))
         {
             return result.Width;
         }
 
-        return paint.MeasureText(text);
+        return font.MeasureText(text, paint);
     }
 
-    private static bool TryCreateStableMeasurePaint(
-        SkiaSharp.SKPaint paint,
-        out SkiaSharp.SKPaint stablePaint,
+    private static bool TryCreateStableMeasureFont(
+        SkiaSharp.SKFont font,
+        out SkiaSharp.SKFont stableFont,
         out float scaleDown)
     {
-        stablePaint = null!;
+        stableFont = null!;
         scaleDown = 1f;
-        if (paint.TextSize <= 0f || paint.TextSize >= MinimumStableTextMeasureSize)
+        if (font.Size <= 0f || font.Size >= MinimumStableTextMeasureSize)
         {
             return false;
         }
 
-        var scaleUp = MinimumStableTextMeasureSize / paint.TextSize;
+        var scaleUp = MinimumStableTextMeasureSize / font.Size;
         scaleDown = 1f / scaleUp;
-        stablePaint = paint.Clone();
-        stablePaint.TextSize = MinimumStableTextMeasureSize;
+        stableFont = new SkiaSharp.SKFont(font.Typeface, MinimumStableTextMeasureSize)
+        {
+            ScaleX = font.ScaleX,
+            SkewX = font.SkewX,
+            Subpixel = font.Subpixel,
+            Edging = font.Edging,
+            Embolden = font.Embolden
+        };
         return true;
     }
 
@@ -113,8 +116,8 @@ public partial class SkiaModel
             return false;
         }
 
-        using var skPaint = ToSKPaint(paint);
-        if (skPaint is null || !TryShapeText(text, 0f, 0f, skPaint, rightToLeft, out var result))
+        using var font = ToSKFont(paint);
+        if (font is null || !TryShapeText(text, 0f, 0f, font, rightToLeft, out var result))
         {
             return false;
         }
@@ -133,19 +136,12 @@ public partial class SkiaModel
         string text,
         float x,
         float y,
-        SkiaSharp.SKPaint paint,
+        SkiaSharp.SKFont font,
         bool? rightToLeft,
         out ShapedTextResult result)
     {
         if (string.IsNullOrEmpty(text) ||
-            paint.Typeface is null)
-        {
-            result = default;
-            return false;
-        }
-
-        using var font = paint.ToFont();
-        if (font is null || font.Typeface is null)
+            font.Typeface is null)
         {
             result = default;
             return false;
