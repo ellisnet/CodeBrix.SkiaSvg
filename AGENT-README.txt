@@ -858,6 +858,15 @@ Feature-to-test-file mapping:
   resvg compatibility tests:
     -> tests/CodeBrix.SkiaSvg.Tests/resvgTests.cs
 
+  SkiaModel text, font, and filter-quality API (post-CS0618 migration):
+    -> tests/CodeBrix.SkiaSvg.Tests/SkiaModelTextApiTests.cs
+
+  SkiaModel Draw method canvas command handling (matrix transforms):
+    -> tests/CodeBrix.SkiaSvg.Tests/SkiaModelDrawTests.cs
+
+  Typeface resolution and fake-bold adjustment:
+    -> tests/CodeBrix.SkiaSvg.Tests/Issue405Tests.cs
+
 HOW TO USE: Fetch the raw file content from GitHub using a URL like:
     https://raw.githubusercontent.com/ellisnet/CodeBrix.SkiaSvg/main/{path}
 For example:

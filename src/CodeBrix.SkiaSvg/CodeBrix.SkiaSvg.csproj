@@ -5,7 +5,33 @@
     <AssemblyName>CodeBrix.SkiaSvg</AssemblyName>
     <RootNamespace>CodeBrix.SkiaSvg</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- NuGet package properties -->
+    <PackageId>CodeBrix.SkiaSvg.MitLicenseForever</PackageId>
+    <Version>1.0.102</Version>
+    <Product>CodeBrix.SkiaSvg</Product>
+    <Title>CodeBrix.SkiaSvg</Title>
+    <Authors>Jeremy Ellis</Authors>
+    <Description>A cross-platform SVG rendering library for .NET built on SkiaSharp. Parses SVG documents into an intermediate representation and renders them to SkiaSharp canvases, bitmaps, and other output formats. Supports text shaping via HarfBuzz, SVG animations, and CSS styling.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/ellisnet/CodeBrix.SkiaSvg</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ellisnet/CodeBrix.SkiaSvg</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon-codebrix-128.png</PackageIcon>
+    <Copyright>Copyright (c) 2026 Jeremy Ellis and contributors</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <IsPackable>true</IsPackable>
+    <PackageTags>svg;skia;skiasharp;rendering;vector-graphics;harfbuzz;text-shaping;canvas;CodeBrix</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\icon-codebrix-128.png" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\AGENT-README.txt" Pack="true" PackagePath="" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CodeBrix.SvgParse.MsplLicenseForever" Version="1.0.102" />
