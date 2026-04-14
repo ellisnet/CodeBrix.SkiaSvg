@@ -3,9 +3,15 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies the join style applied at corners of stroked paths.
+/// </summary>
 public enum SKStrokeJoin
 {
+    /// <summary>Sharp corner join.</summary>
     Miter = 0,
+    /// <summary>Rounded corner join.</summary>
     Round = 1,
+    /// <summary>Beveled (flat) corner join.</summary>
     Bevel = 2
 }

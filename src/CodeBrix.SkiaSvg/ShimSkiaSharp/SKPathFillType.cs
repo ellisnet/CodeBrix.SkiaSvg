@@ -3,8 +3,13 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies the rule used to determine the interior of a path.
+/// </summary>
 public enum SKPathFillType
 {
+    /// <summary>Uses the non-zero winding rule.</summary>
     Winding = 0,
+    /// <summary>Uses the even-odd rule.</summary>
     EvenOdd = 1
 }

@@ -6,8 +6,12 @@ using System.Linq;
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.TypefaceProviders; //Was previously: namespace Svg.Skia.TypefaceProviders;
 
+/// <summary>
+/// A typeface provider that resolves typefaces using <see cref="SkiaSharp.SKTypeface.FromFamilyName(string, SkiaSharp.SKFontStyleWeight, SkiaSharp.SKFontStyleWidth, SkiaSharp.SKFontStyleSlant)"/>.
+/// </summary>
 public sealed class DefaultTypefaceProvider : ITypefaceProvider
 {
+    /// <summary>Characters trimmed from font family names during matching.</summary>
     public static readonly char[] s_fontFamilyTrim = { '\'' };
 
     private static bool IsGenericFamilyName(string familyName)
@@ -19,6 +23,7 @@ public sealed class DefaultTypefaceProvider : ITypefaceProvider
                familyName.Equals("fantasy", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <inheritdoc />
     public SkiaSharp.SKTypeface FromFamilyName(string fontFamily, SkiaSharp.SKFontStyleWeight fontWeight, SkiaSharp.SKFontStyleWidth fontWidth, SkiaSharp.SKFontStyleSlant fontStyle)
     {
         var skTypeface = default(SkiaSharp.SKTypeface);

@@ -3,8 +3,13 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp.Editing; //Was previously: namespace ShimSkiaSharp.Editing;
 
+/// <summary>
+/// Specifies how editing operations are applied to objects.
+/// </summary>
 public enum EditMode
 {
+    /// <summary>Modify the object in place.</summary>
     InPlace,
+    /// <summary>Clone the object before applying modifications.</summary>
     CloneOnWrite
 }

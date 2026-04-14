@@ -3,10 +3,17 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies how a shader tiles when coordinates fall outside its bounds.
+/// </summary>
 public enum SKShaderTileMode
 {
+    /// <summary>Clamp to the edge color.</summary>
     Clamp = 0,
+    /// <summary>Repeat the shader pattern.</summary>
     Repeat = 1,
+    /// <summary>Mirror the shader pattern at boundaries.</summary>
     Mirror = 2,
+    /// <summary>Render transparent outside the bounds.</summary>
     Decal = 3
 }

@@ -3,9 +3,15 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies horizontal text alignment.
+/// </summary>
 public enum SKTextAlign
 {
+    /// <summary>Align text to the left.</summary>
     Left = 0,
+    /// <summary>Center the text.</summary>
     Center = 1,
+    /// <summary>Align text to the right.</summary>
     Right = 2
 }

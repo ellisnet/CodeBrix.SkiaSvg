@@ -5,18 +5,33 @@ using System;
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Represents a color with 8-bit RGBA components.
+/// </summary>
 public readonly struct SKColor
 {
+    /// <summary>Gets the red component (0–255).</summary>
     public byte Red { get; }
 
+    /// <summary>Gets the green component (0–255).</summary>
     public byte Green { get; }
 
+    /// <summary>Gets the blue component (0–255).</summary>
     public byte Blue { get; }
 
+    /// <summary>Gets the alpha component (0–255).</summary>
     public byte Alpha { get; }
 
+    /// <summary>A default (transparent black) color.</summary>
     public static readonly SKColor Empty = default;
 
+    /// <summary>
+    /// Initializes a new <see cref="SKColor"/> with the specified RGBA components.
+    /// </summary>
+    /// <param name="red">The red component.</param>
+    /// <param name="green">The green component.</param>
+    /// <param name="blue">The blue component.</param>
+    /// <param name="alpha">The alpha component.</param>
     public SKColor(byte red, byte green, byte blue, byte alpha)
     {
         Red = red;
@@ -25,6 +40,8 @@ public readonly struct SKColor
         Alpha = alpha;
     }
 
+    /// <summary>Converts an <see cref="SKColor"/> to an <see cref="SKColorF"/>.</summary>
+    /// <param name="color">The color to convert.</param>
     public static implicit operator SKColorF(SKColor color)
     {
         return new(

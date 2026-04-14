@@ -3,8 +3,13 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies the winding direction for path construction.
+/// </summary>
 public enum SKPathDirection
 {
+    /// <summary>Clockwise direction.</summary>
     Clockwise = 0,
+    /// <summary>Counter-clockwise direction.</summary>
     CounterClockwise = 1
 }

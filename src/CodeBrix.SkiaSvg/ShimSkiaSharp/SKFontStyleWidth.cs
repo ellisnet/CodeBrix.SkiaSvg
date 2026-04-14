@@ -3,15 +3,27 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies the width (stretch) of a font.
+/// </summary>
 public enum SKFontStyleWidth
 {
+    /// <summary>Ultra-condensed width.</summary>
     UltraCondensed = 1,
+    /// <summary>Extra-condensed width.</summary>
     ExtraCondensed = 2,
+    /// <summary>Condensed width.</summary>
     Condensed = 3,
+    /// <summary>Semi-condensed width.</summary>
     SemiCondensed = 4,
+    /// <summary>Normal width.</summary>
     Normal = 5,
+    /// <summary>Semi-expanded width.</summary>
     SemiExpanded = 6,
+    /// <summary>Expanded width.</summary>
     Expanded = 7,
+    /// <summary>Extra-expanded width.</summary>
     ExtraExpanded = 8,
+    /// <summary>Ultra-expanded width.</summary>
     UltraExpanded = 9
 }

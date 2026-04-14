@@ -3,9 +3,15 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies the slant style of a font.
+/// </summary>
 public enum SKFontStyleSlant
 {
+    /// <summary>Upright (roman) style.</summary>
     Upright = 0,
+    /// <summary>Italic style.</summary>
     Italic = 1,
+    /// <summary>Oblique (slanted) style.</summary>
     Oblique = 2
 }

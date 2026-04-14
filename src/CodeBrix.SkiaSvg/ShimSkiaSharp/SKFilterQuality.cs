@@ -3,10 +3,17 @@
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg.ShimSkiaSharp; //Was previously: namespace ShimSkiaSharp;
 
+/// <summary>
+/// Specifies the level of quality when filtering (scaling/transforming) images.
+/// </summary>
 public enum SKFilterQuality
 {
+    /// <summary>Nearest-neighbor filtering (fastest, lowest quality).</summary>
     None = 0,
+    /// <summary>Bilinear filtering.</summary>
     Low = 1,
+    /// <summary>Bilinear filtering with mipmaps.</summary>
     Medium = 2,
+    /// <summary>Bicubic filtering (slowest, highest quality).</summary>
     High = 3
 }
