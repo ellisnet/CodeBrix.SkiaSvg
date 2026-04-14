@@ -2,20 +2,34 @@ using CodeBrix.SvgParse;
 
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>Identifies the kind of SVG scene node.</summary>
 public enum SvgSceneNodeKind
 {
+    /// <summary>An unknown node type.</summary>
     Unknown,
+    /// <summary>An SVG fragment (root) element.</summary>
     Fragment,
+    /// <summary>A group element.</summary>
     Group,
+    /// <summary>An anchor element.</summary>
     Anchor,
+    /// <summary>A use (reference) element.</summary>
     Use,
+    /// <summary>A switch element.</summary>
     Switch,
+    /// <summary>An image element.</summary>
     Image,
+    /// <summary>A text element.</summary>
     Text,
+    /// <summary>A marker element.</summary>
     Marker,
+    /// <summary>A path element.</summary>
     Path,
+    /// <summary>A geometric shape element.</summary>
     Shape,
+    /// <summary>A mask element.</summary>
     Mask,
+    /// <summary>A generic container element.</summary>
     Container
 }
 

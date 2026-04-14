@@ -8,6 +8,7 @@ using CodeBrix.SkiaSvg.Model.Services;
 
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>Represents a reusable SVG resource in the scene graph such as a clip path, mask, or gradient.</summary>
 public sealed class SvgSceneResource
 {
     private readonly HashSet<string> _subtreeAddresses = new(StringComparer.Ordinal);
@@ -31,22 +32,31 @@ public sealed class SvgSceneResource
         DependentCompilationRoots = new ReadOnlySetView<string>(_dependentCompilationRoots);
     }
 
+    /// <summary>Gets the unique key identifying this resource.</summary>
     public string Key { get; }
 
+    /// <summary>Gets the kind of scene resource.</summary>
     public SvgSceneResourceKind Kind { get; }
 
+    /// <summary>Gets the source SVG element defining this resource.</summary>
     public SvgElement SourceElement { get; }
 
+    /// <summary>Gets the address key of the source element.</summary>
     public string AddressKey { get; }
 
+    /// <summary>Gets the identifier of the source SVG element.</summary>
     public string Id { get; }
 
+    /// <summary>Gets the set of subtree address keys contained in this resource.</summary>
     public IReadOnlyCollection<string> SubtreeAddresses { get; }
 
+    /// <summary>Gets the set of resource keys this resource depends on.</summary>
     public IReadOnlyCollection<string> DependencyKeys { get; }
 
+    /// <summary>Gets the set of resource keys that depend on this resource.</summary>
     public IReadOnlyCollection<string> ReverseDependencyKeys { get; }
 
+    /// <summary>Gets the set of compilation root keys that depend on this resource.</summary>
     public IReadOnlyCollection<string> DependentCompilationRoots { get; }
 
     internal void AddSubtreeAddress(string addressKey)

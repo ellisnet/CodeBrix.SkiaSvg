@@ -5,33 +5,60 @@ using CodeBrix.SkiaSvg.ShimSkiaSharp;
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>Identifies the type of pointer device.</summary>
 public enum SvgPointerDeviceType
 {
+    /// <summary>An unknown device type.</summary>
     Unknown,
+    /// <summary>A mouse device.</summary>
     Mouse,
+    /// <summary>A touch device.</summary>
     Touch,
+    /// <summary>A pen or stylus device.</summary>
     Pen
 }
 
+/// <summary>Identifies a mouse button.</summary>
 public enum SvgMouseButton
 {
+    /// <summary>No button.</summary>
     None,
+    /// <summary>The left mouse button.</summary>
     Left,
+    /// <summary>The middle mouse button.</summary>
     Middle,
+    /// <summary>The right mouse button.</summary>
     Right,
+    /// <summary>The first extended mouse button.</summary>
     XButton1,
+    /// <summary>The second extended mouse button.</summary>
     XButton2
 }
 
+/// <summary>Identifies the routing phase of a pointer event.</summary>
 public enum SvgPointerEventRoutePhase
 {
+    /// <summary>The tunneling (preview) phase, propagating from root toward target.</summary>
     Tunnel,
+    /// <summary>The event has reached the target element.</summary>
     Target,
+    /// <summary>The bubbling phase, propagating from target toward root.</summary>
     Bubble
 }
 
+/// <summary>Describes input state for a pointer event.</summary>
 public sealed class SvgPointerInput
 {
+    /// <summary>Initializes a new instance of the <see cref="SvgPointerInput"/> class.</summary>
+    /// <param name="picturePoint">The point in picture coordinates.</param>
+    /// <param name="pointerDeviceType">The type of pointer device.</param>
+    /// <param name="button">The mouse button involved.</param>
+    /// <param name="clickCount">The number of clicks.</param>
+    /// <param name="wheelDelta">The mouse wheel delta.</param>
+    /// <param name="altKey">Whether the Alt key is pressed.</param>
+    /// <param name="shiftKey">Whether the Shift key is pressed.</param>
+    /// <param name="ctrlKey">Whether the Ctrl key is pressed.</param>
+    /// <param name="sessionId">An identifier for the pointer session.</param>
     public SvgPointerInput(
         SKPoint picturePoint,
         SvgPointerDeviceType pointerDeviceType,
@@ -54,25 +81,35 @@ public sealed class SvgPointerInput
         SessionId = sessionId ?? string.Empty;
     }
 
+    /// <summary>Gets the point in picture coordinates.</summary>
     public SKPoint PicturePoint { get; }
 
+    /// <summary>Gets the type of pointer device.</summary>
     public SvgPointerDeviceType PointerDeviceType { get; }
 
+    /// <summary>Gets the mouse button involved.</summary>
     public SvgMouseButton Button { get; }
 
+    /// <summary>Gets the number of clicks.</summary>
     public int ClickCount { get; }
 
+    /// <summary>Gets the mouse wheel delta.</summary>
     public int WheelDelta { get; }
 
+    /// <summary>Gets a value indicating whether the Alt key is pressed.</summary>
     public bool AltKey { get; }
 
+    /// <summary>Gets a value indicating whether the Shift key is pressed.</summary>
     public bool ShiftKey { get; }
 
+    /// <summary>Gets a value indicating whether the Ctrl key is pressed.</summary>
     public bool CtrlKey { get; }
 
+    /// <summary>Gets the pointer session identifier.</summary>
     public string SessionId { get; }
 }
 
+/// <summary>Provides data for SVG pointer events.</summary>
 public sealed class SvgPointerEventArgs : EventArgs
 {
     internal SvgPointerEventArgs(
@@ -93,25 +130,35 @@ public sealed class SvgPointerEventArgs : EventArgs
         Cursor = cursor;
     }
 
+    /// <summary>Gets the type of pointer event.</summary>
     public SvgPointerEventType EventType { get; }
 
+    /// <summary>Gets the element receiving the event in the current routing phase.</summary>
     public SvgElement Element { get; }
 
+    /// <summary>Gets the original target element of the event.</summary>
     public SvgElement TargetElement { get; }
 
+    /// <summary>Gets the related element, such as the element being entered or left.</summary>
     public SvgElement RelatedElement { get; }
 
+    /// <summary>Gets the current routing phase of the event.</summary>
     public SvgPointerEventRoutePhase RoutePhase { get; }
 
+    /// <summary>Gets the pointer input state.</summary>
     public SvgPointerInput Input { get; }
 
+    /// <summary>Gets the resolved cursor for the target element.</summary>
     public string Cursor { get; }
 
+    /// <summary>Gets or sets a value indicating whether the event has been handled.</summary>
     public bool Handled { get; set; }
 
+    /// <summary>Gets the point in picture coordinates from the input.</summary>
     public SKPoint PicturePoint => Input.PicturePoint;
 }
 
+/// <summary>Contains the result of dispatching a pointer interaction.</summary>
 public sealed class SvgInteractionDispatchResult
 {
     internal SvgInteractionDispatchResult(SvgElement targetElement, string cursor, bool handled)
@@ -121,13 +168,17 @@ public sealed class SvgInteractionDispatchResult
         Handled = handled;
     }
 
+    /// <summary>Gets the target element of the interaction.</summary>
     public SvgElement TargetElement { get; }
 
+    /// <summary>Gets the resolved cursor for the target element.</summary>
     public string Cursor { get; }
 
+    /// <summary>Gets a value indicating whether the event was handled.</summary>
     public bool Handled { get; }
 }
 
+/// <summary>Dispatches pointer events to SVG elements with tunneling, targeting, and bubbling phases.</summary>
 public sealed class SvgInteractionDispatcher
 {
     private readonly SvgEventCallerRegistry _eventCallerRegistry = new();
@@ -136,48 +187,76 @@ public sealed class SvgInteractionDispatcher
     private SvgElement _pressedElement;
     private SvgElement _capturedElement;
 
+    /// <summary>Gets or sets a value indicating whether SVG element events are raised.</summary>
     public bool RaiseSvgElementEvents { get; set; } = true;
 
+    /// <summary>Gets the currently hovered SVG element.</summary>
     public SvgElement HoveredElement => _hoveredElement;
 
+    /// <summary>Gets the currently pressed SVG element.</summary>
     public SvgElement PressedElement => _pressedElement;
 
+    /// <summary>Gets the currently captured SVG element.</summary>
     public SvgElement CapturedElement => _capturedElement;
 
+    /// <summary>Gets the currently resolved cursor string.</summary>
     public string CurrentCursor { get; private set; }
 
+    /// <summary>Occurs when a pointer event is dispatched to an element.</summary>
     public event EventHandler<SvgPointerEventArgs> Dispatched;
 
+    /// <summary>Hit-tests to find the topmost SVG element at the specified point.</summary>
+    /// <param name="svg">The SVG instance to hit-test.</param>
+    /// <param name="picturePoint">The point in picture coordinates.</param>
+    /// <returns>The topmost element at the point, or <c>null</c> if none.</returns>
     public SvgElement HitTestTopmostElement(SKSvg svg, SKPoint picturePoint)
     {
         return svg?.HitTestTopmostElement(picturePoint);
     }
 
+    /// <summary>Handles a pointer moved event, dispatching it through the SVG element tree.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
     public void HandlePointerMoved(SKSvg svg, SvgPointerInput input)
     {
         _ = DispatchPointerMoved(svg, input);
     }
 
+    /// <summary>Handles a pointer pressed event, dispatching it through the SVG element tree.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
     public void HandlePointerPressed(SKSvg svg, SvgPointerInput input)
     {
         _ = DispatchPointerPressed(svg, input);
     }
 
+    /// <summary>Handles a pointer released event, dispatching it through the SVG element tree.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
     public void HandlePointerReleased(SKSvg svg, SvgPointerInput input)
     {
         _ = DispatchPointerReleased(svg, input);
     }
 
+    /// <summary>Handles a pointer wheel changed event, dispatching it through the SVG element tree.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
     public void HandlePointerWheelChanged(SKSvg svg, SvgPointerInput input)
     {
         _ = DispatchPointerWheelChanged(svg, input);
     }
 
+    /// <summary>Handles a pointer exited event.</summary>
+    /// <param name="input">The pointer input state.</param>
     public void HandlePointerExited(SvgPointerInput input)
     {
         _ = DispatchPointerExited(input);
     }
 
+    /// <summary>Dispatches a pointer moved event and returns the result.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
+    /// <returns>The dispatch result.</returns>
     public SvgInteractionDispatchResult DispatchPointerMoved(SKSvg svg, SvgPointerInput input)
     {
         EnsureEventBridge(svg);
@@ -202,6 +281,10 @@ public sealed class SvgInteractionDispatcher
         return CreateResult(_hoveredElement ?? routeTarget, handled);
     }
 
+    /// <summary>Dispatches a pointer pressed event and returns the result.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
+    /// <returns>The dispatch result.</returns>
     public SvgInteractionDispatchResult DispatchPointerPressed(SKSvg svg, SvgPointerInput input)
     {
         EnsureEventBridge(svg);
@@ -217,6 +300,10 @@ public sealed class SvgInteractionDispatcher
         return CreateResult(_hoveredElement ?? target, handled);
     }
 
+    /// <summary>Dispatches a pointer released event and returns the result.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
+    /// <returns>The dispatch result.</returns>
     public SvgInteractionDispatchResult DispatchPointerReleased(SKSvg svg, SvgPointerInput input)
     {
         EnsureEventBridge(svg);
@@ -255,6 +342,10 @@ public sealed class SvgInteractionDispatcher
         return CreateResult(_hoveredElement ?? hitTarget, handled);
     }
 
+    /// <summary>Dispatches a pointer wheel changed event and returns the result.</summary>
+    /// <param name="svg">The SVG instance.</param>
+    /// <param name="input">The pointer input state.</param>
+    /// <returns>The dispatch result.</returns>
     public SvgInteractionDispatchResult DispatchPointerWheelChanged(SKSvg svg, SvgPointerInput input)
     {
         EnsureEventBridge(svg);
@@ -279,11 +370,18 @@ public sealed class SvgInteractionDispatcher
         return CreateResult(_hoveredElement ?? routeTarget, handled);
     }
 
+    /// <summary>Dispatches a pointer exited event and returns the result.</summary>
+    /// <param name="input">The pointer input state.</param>
+    /// <returns>The dispatch result.</returns>
     public SvgInteractionDispatchResult DispatchPointerExited(SvgPointerInput input)
     {
         return DispatchPointerExited(null, input);
     }
 
+    /// <summary>Dispatches a pointer exited event with an optional SVG context and returns the result.</summary>
+    /// <param name="svg">The SVG instance, or <c>null</c>.</param>
+    /// <param name="input">The pointer input state.</param>
+    /// <returns>The dispatch result.</returns>
     public SvgInteractionDispatchResult DispatchPointerExited(SKSvg svg, SvgPointerInput input)
     {
         if (_capturedElement is not null)
@@ -308,6 +406,7 @@ public sealed class SvgInteractionDispatcher
         return CreateResult(null, handled);
     }
 
+    /// <summary>Resets the dispatcher state, clearing all tracked elements and event registrations.</summary>
     public void Reset()
     {
         _hoveredElement = null;

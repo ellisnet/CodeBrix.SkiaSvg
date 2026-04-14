@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>Provides data for animation frame change events.</summary>
 public sealed class SvgAnimationFrameChangedEventArgs : EventArgs
 {
     internal SvgAnimationFrameChangedEventArgs(TimeSpan time)
@@ -17,9 +18,11 @@ public sealed class SvgAnimationFrameChangedEventArgs : EventArgs
         Time = time;
     }
 
+    /// <summary>Gets the animation time of the changed frame.</summary>
     public TimeSpan Time { get; }
 }
 
+/// <summary>Controls SVG animation playback, evaluating animation bindings and producing frame states.</summary>
 [RequiresUnreferencedCode("Uses TypeDescriptor-based converters for animated SVG values.")]
 public sealed class SvgAnimationController : IDisposable
 {
@@ -195,6 +198,8 @@ public sealed class SvgAnimationController : IDisposable
     private int _frameStateVersion;
     private bool _disposed;
 
+    /// <summary>Initializes a new instance of the <see cref="SvgAnimationController"/> class.</summary>
+    /// <param name="sourceDocument">The source SVG document containing animation elements.</param>
     public SvgAnimationController(SvgDocument sourceDocument)
     {
         SourceDocument = sourceDocument ?? throw new ArgumentNullException(nameof(sourceDocument));
@@ -207,12 +212,16 @@ public sealed class SvgAnimationController : IDisposable
         _animatedTopLevelChildIndexes = DiscoverAnimatedTopLevelChildIndexes(sourceDocument, _bindings);
     }
 
+    /// <summary>Gets the source SVG document.</summary>
     public SvgDocument SourceDocument { get; }
 
+    /// <summary>Gets the animation clock that tracks playback time.</summary>
     public SvgAnimationClock Clock { get; }
 
+    /// <summary>Gets a value indicating whether the document contains animations.</summary>
     public bool HasAnimations => _bindings.Count > 0;
 
+    /// <summary>Occurs when the animation frame state changes.</summary>
     public event EventHandler<SvgAnimationFrameChangedEventArgs> FrameChanged;
 
     internal bool TryGetAnimatedTopLevelChildIndexes(out IReadOnlyList<int> childIndexes)
@@ -264,11 +273,16 @@ public sealed class SvgAnimationController : IDisposable
         return keys;
     }
 
+    /// <summary>Creates an animated copy of the source document at the current clock time.</summary>
+    /// <returns>A deep copy of the SVG document with animation values applied.</returns>
     public SvgDocument CreateAnimatedDocument()
     {
         return CreateAnimatedDocument(EvaluateFrameState(Clock.CurrentTime));
     }
 
+    /// <summary>Creates an animated copy of the source document at the specified time.</summary>
+    /// <param name="time">The animation time to evaluate.</param>
+    /// <returns>A deep copy of the SVG document with animation values applied.</returns>
     public SvgDocument CreateAnimatedDocument(TimeSpan time)
     {
         ThrowIfDisposed();
@@ -379,6 +393,10 @@ public sealed class SvgAnimationController : IDisposable
         }
     }
 
+    /// <summary>Records a pointer event for animation timing purposes.</summary>
+    /// <param name="element">The SVG element that received the event.</param>
+    /// <param name="eventType">The type of pointer event.</param>
+    /// <returns><c>true</c> if the event was recorded; otherwise, <c>false</c>.</returns>
     public bool RecordPointerEvent(SvgElement element, SvgPointerEventType eventType)
     {
         ThrowIfDisposed();
@@ -406,6 +424,7 @@ public sealed class SvgAnimationController : IDisposable
         return true;
     }
 
+    /// <summary>Resets the animation controller, clearing pointer event state and the clock.</summary>
     public void Reset()
     {
         ThrowIfDisposed();
@@ -420,6 +439,7 @@ public sealed class SvgAnimationController : IDisposable
         }
     }
 
+    /// <summary>Releases all resources used by this <see cref="SvgAnimationController"/> instance.</summary>
     public void Dispose()
     {
         if (_disposed)

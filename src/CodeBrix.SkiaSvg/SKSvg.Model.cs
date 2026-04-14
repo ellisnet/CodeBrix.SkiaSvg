@@ -13,6 +13,7 @@ using CodeBrix.SkiaSvg.Model.Services;
 
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>Provides SVG loading, rendering, and animation support using SkiaSharp.</summary>
 public partial class SKSvg : IDisposable
 {
     private enum SourceFormat
@@ -21,8 +22,13 @@ public partial class SKSvg : IDisposable
         VectorDrawable
     }
 
+    /// <summary>Gets or sets a value indicating whether to cache the original stream for reload support.</summary>
     public static bool CacheOriginalStream { get; set; }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a stream.</summary>
+    /// <param name="stream">The stream containing SVG data.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromStream(System.IO.Stream stream, SvgParameters? parameters = null)
     {
@@ -31,9 +37,16 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a stream.</summary>
+    /// <param name="stream">The stream containing SVG data.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromStream(System.IO.Stream stream) => CreateFromStream(stream, null);
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a file path.</summary>
+    /// <param name="path">The path to the SVG file.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromFile(string path, SvgParameters? parameters = null)
     {
@@ -42,9 +55,16 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a file path.</summary>
+    /// <param name="path">The path to the SVG file.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromFile(string path) => CreateFromFile(path, null);
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a VectorDrawable file.</summary>
+    /// <param name="path">The path to the VectorDrawable file.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromVectorDrawable(string path, SvgParameters? parameters = null)
     {
@@ -53,6 +73,10 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a VectorDrawable stream.</summary>
+    /// <param name="stream">The stream containing VectorDrawable data.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromVectorDrawable(System.IO.Stream stream, SvgParameters? parameters = null)
     {
@@ -61,6 +85,9 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from a VectorDrawable XML reader.</summary>
+    /// <param name="reader">The XML reader containing VectorDrawable data.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromVectorDrawable(XmlReader reader)
     {
@@ -69,6 +96,9 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from an XML reader.</summary>
+    /// <param name="reader">The XML reader containing SVG data.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromXmlReader(XmlReader reader)
     {
@@ -77,6 +107,9 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from an SVG string.</summary>
+    /// <param name="svg">The SVG markup string.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromSvg(string svg)
     {
@@ -85,6 +118,9 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates an <see cref="SKSvg"/> instance from an SVG document.</summary>
+    /// <param name="svgDocument">The SVG document.</param>
+    /// <returns>A new <see cref="SKSvg"/> instance.</returns>
     [RequiresUnreferencedCode("Rendering from an SVG document may use trim-unsafe runtime discovery paths.")]
     public static SKSvg CreateFromSvgDocument(SvgDocument svgDocument)
     {
@@ -93,6 +129,11 @@ public partial class SKSvg : IDisposable
         return skSvg;
     }
 
+    /// <summary>Creates a SkiaSharp picture from an SVG fragment.</summary>
+    /// <param name="svgFragment">The SVG fragment to render.</param>
+    /// <param name="skiaModel">The Skia model for type conversion.</param>
+    /// <param name="assetLoader">The asset loader for resources.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     public static SkiaSharp.SKPicture ToPicture(SvgFragment svgFragment, SkiaModel skiaModel, ISvgAssetLoader assetLoader)
     {
         var picture = SvgSceneRuntime.CreateModel(
@@ -103,6 +144,11 @@ public partial class SKSvg : IDisposable
         return skiaModel.ToSKPicture(picture);
     }
 
+    /// <summary>Draws an SVG fragment directly to a SkiaSharp canvas.</summary>
+    /// <param name="skCanvas">The target SkiaSharp canvas.</param>
+    /// <param name="svgFragment">The SVG fragment to draw.</param>
+    /// <param name="skiaModel">The Skia model for type conversion.</param>
+    /// <param name="assetLoader">The asset loader for resources.</param>
     public static void Draw(SkiaSharp.SKCanvas skCanvas, SvgFragment svgFragment, SkiaModel skiaModel, ISvgAssetLoader assetLoader)
     {
         var picture = SvgSceneRuntime.CreateModel(
@@ -116,6 +162,11 @@ public partial class SKSvg : IDisposable
         }
     }
 
+    /// <summary>Draws an SVG file directly to a SkiaSharp canvas.</summary>
+    /// <param name="skCanvas">The target SkiaSharp canvas.</param>
+    /// <param name="path">The path to the SVG file.</param>
+    /// <param name="skiaModel">The Skia model for type conversion.</param>
+    /// <param name="assetLoader">The asset loader for resources.</param>
     public static void Draw(SkiaSharp.SKCanvas skCanvas, string path, SkiaModel skiaModel, ISvgAssetLoader assetLoader)
     {
         var svgDocument = SvgService.Open(path);
@@ -137,35 +188,48 @@ public partial class SKSvg : IDisposable
     private TimeSpan _lastRenderedAnimationTime = TimeSpan.MinValue;
     private TimeSpan _animationMinimumRenderInterval;
 
+    /// <summary>Gets the synchronization object for thread-safe operations.</summary>
     public object Sync { get; } = new();
 
+    /// <summary>Gets the SVG rendering settings.</summary>
     public SKSvgSettings Settings { get; }
 
+    /// <summary>Gets the asset loader used for SVG resources.</summary>
     public ISvgAssetLoader AssetLoader { get; }
 
+    /// <summary>Gets the Skia model for type conversions.</summary>
     public SkiaModel SkiaModel { get; }
 
+    /// <summary>Gets the current shim picture model.</summary>
     public SKPicture Model { get; private set; }
 
+    /// <summary>Gets the loaded SVG document.</summary>
     public SvgDocument SourceDocument { get; private set; }
 
+    /// <summary>Gets the animation controller for SVG animations.</summary>
     public SvgAnimationController AnimationController { get; private set; }
 
+    /// <summary>Gets a value indicating whether the loaded SVG has animations.</summary>
     public bool HasAnimations => AnimationController?.HasAnimations == true;
 
+    /// <summary>Gets the current animation time.</summary>
     public TimeSpan AnimationTime => AnimationController?.Clock.CurrentTime ?? TimeSpan.Zero;
 
+    /// <summary>Gets or sets the minimum interval between animation frame renders.</summary>
     public TimeSpan AnimationMinimumRenderInterval
     {
         get => _animationMinimumRenderInterval;
         set => _animationMinimumRenderInterval = value < TimeSpan.Zero ? TimeSpan.Zero : value;
     }
 
+    /// <summary>Gets a value indicating whether there is a pending animation frame.</summary>
     public bool HasPendingAnimationFrame => _pendingAnimationFrameState is not null;
 
+    /// <summary>Gets the number of dirty animation targets in the last render.</summary>
     public int LastAnimationDirtyTargetCount { get; private set; }
 
     private SkiaSharp.SKPicture _picture;
+    /// <summary>Gets the rendered SkiaSharp picture.</summary>
     public virtual SkiaSharp.SKPicture Picture
     {
         get
@@ -214,9 +278,11 @@ public partial class SKSvg : IDisposable
         protected set => _picture = value;
     }
 
+    /// <summary>Gets or sets the wireframe rendering picture.</summary>
     public SkiaSharp.SKPicture WireframePicture { get; protected set; }
 
     private bool _wireframe;
+    /// <summary>Gets or sets a value indicating whether to render in wireframe mode.</summary>
     public bool Wireframe
     {
         get => _wireframe;
@@ -228,12 +294,14 @@ public partial class SKSvg : IDisposable
     }
 
     private DrawAttributes _ignoreAttributes;
+    /// <summary>Gets or sets which drawing attributes to ignore during rendering.</summary>
     public DrawAttributes IgnoreAttributes
     {
         get => _ignoreAttributes;
         set => _ignoreAttributes = value;
     }
 
+    /// <summary>Clears the cached wireframe picture.</summary>
     public void ClearWireframePicture()
     {
         lock (Sync)
@@ -244,22 +312,30 @@ public partial class SKSvg : IDisposable
         }
     }
 
+    /// <summary>Occurs after a draw operation completes.</summary>
     public event EventHandler<SKSvgDrawEventArgs> OnDraw;
 
+    /// <summary>Occurs when an animation frame changes and the display should be refreshed.</summary>
     public event EventHandler<SvgAnimationFrameChangedEventArgs> AnimationInvalidated;
 
+    /// <summary>Raises the <see cref="OnDraw"/> event.</summary>
+    /// <param name="e">The event arguments.</param>
     protected virtual void RaiseOnDraw(SKSvgDrawEventArgs e)
     {
         OnDraw?.Invoke(this, e);
     }
 
+    /// <summary>Raises the <see cref="AnimationInvalidated"/> event.</summary>
+    /// <param name="e">The event arguments.</param>
     protected virtual void RaiseAnimationInvalidated(SvgAnimationFrameChangedEventArgs e)
     {
         AnimationInvalidated?.Invoke(this, e);
     }
 
+    /// <summary>Gets the original SVG parameters used for loading.</summary>
     public SvgParameters? Parameters => _originalParameters;
 
+    /// <summary>Initializes a new instance of the <see cref="SKSvg"/> class with default settings.</summary>
     public SKSvg()
     {
         Settings = new SKSvgSettings();
@@ -364,48 +440,81 @@ public partial class SKSvg : IDisposable
         return clone;
     }
 
+    /// <summary>Loads an SVG document from a stream.</summary>
+    /// <param name="stream">The stream containing SVG data.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture Load(System.IO.Stream stream, SvgParameters? parameters = null)
     {
         return LoadInternal(stream, parameters, null, SourceFormat.Svg, SvgService.Open);
     }
 
+    /// <summary>Loads an SVG document from a stream.</summary>
+    /// <param name="stream">The stream containing SVG data.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture Load(System.IO.Stream stream) => Load(stream, null);
 
+    /// <summary>Loads an SVG document from a stream with a base URI.</summary>
+    /// <param name="stream">The stream containing SVG data.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <param name="baseUri">The base URI for resolving relative references.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture Load(System.IO.Stream stream, SvgParameters? parameters, Uri baseUri)
     {
         return LoadInternal(stream, parameters, baseUri, SourceFormat.Svg, SvgService.Open);
     }
 
+    /// <summary>Loads an SVG document from a file path.</summary>
+    /// <param name="path">The path to the SVG file.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture Load(string path, SvgParameters? parameters = null)
     {
         return LoadPath(path, parameters, SourceFormat.Svg, SvgService.Open);
     }
 
+    /// <summary>Loads an SVG document from a file path.</summary>
+    /// <param name="path">The path to the SVG file.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture Load(string path) => Load(path, null);
 
+    /// <summary>Loads an SVG document from an XML reader.</summary>
+    /// <param name="reader">The XML reader containing SVG data.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture Load(XmlReader reader)
     {
         return LoadReader(reader, SourceFormat.Svg, SvgService.Open);
     }
 
+    /// <summary>Loads a VectorDrawable from a stream.</summary>
+    /// <param name="stream">The stream containing VectorDrawable data.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture LoadVectorDrawable(System.IO.Stream stream, SvgParameters? parameters = null)
     {
         return LoadInternal(stream, parameters, null, SourceFormat.VectorDrawable, SvgService.OpenVectorDrawable);
     }
 
+    /// <summary>Loads a VectorDrawable from a file path.</summary>
+    /// <param name="path">The path to the VectorDrawable file.</param>
+    /// <param name="parameters">Optional SVG parameters.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture LoadVectorDrawable(string path, SvgParameters? parameters = null)
     {
         return LoadPath(path, parameters, SourceFormat.VectorDrawable, SvgService.OpenVectorDrawable);
     }
 
+    /// <summary>Loads a VectorDrawable from an XML reader.</summary>
+    /// <param name="reader">The XML reader containing VectorDrawable data.</param>
+    /// <returns>The rendered SkiaSharp picture.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture LoadVectorDrawable(XmlReader reader)
     {
@@ -522,6 +631,9 @@ public partial class SKSvg : IDisposable
         return RenderSvgDocument(svgDocument);
     }
 
+    /// <summary>Reloads the SVG from the originally cached stream or path with new parameters.</summary>
+    /// <param name="parameters">The new SVG parameters to apply.</param>
+    /// <returns>The rendered SkiaSharp picture, or <c>null</c> if reloading fails.</returns>
     [RequiresUnreferencedCode("Reloading may reparse cached SVG or VectorDrawable content through trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture ReLoad(SvgParameters? parameters)
     {
@@ -560,6 +672,9 @@ public partial class SKSvg : IDisposable
             : LoadInternal(originalStream, parameters, originalBaseUri, SourceFormat.Svg, SvgService.Open);
     }
 
+    /// <summary>Loads and renders an SVG from an SVG markup string.</summary>
+    /// <param name="svg">The SVG markup string.</param>
+    /// <returns>The rendered SkiaSharp picture, or <c>null</c> on failure.</returns>
     [RequiresUnreferencedCode("SVG document parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture FromSvg(string svg)
     {
@@ -567,6 +682,9 @@ public partial class SKSvg : IDisposable
         return LoadSvgDocument(svgDocument);
     }
 
+    /// <summary>Loads and renders a VectorDrawable from an XML markup string.</summary>
+    /// <param name="xml">The VectorDrawable XML markup string.</param>
+    /// <returns>The rendered SkiaSharp picture, or <c>null</c> on failure.</returns>
     [RequiresUnreferencedCode("VectorDrawable parsing may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture FromVectorDrawable(string xml)
     {
@@ -574,27 +692,39 @@ public partial class SKSvg : IDisposable
         return LoadSvgDocument(svgDocument);
     }
 
+    /// <summary>Renders an already-parsed SVG document.</summary>
+    /// <param name="svgDocument">The SVG document to render.</param>
+    /// <returns>The rendered SkiaSharp picture, or <c>null</c> on failure.</returns>
     [RequiresUnreferencedCode("Rendering from an SVG document may use trim-unsafe runtime discovery paths.")]
     public SkiaSharp.SKPicture FromSvgDocument(SvgDocument svgDocument)
     {
         return LoadSvgDocument(svgDocument);
     }
 
+    /// <summary>Seeks the animation to the specified time.</summary>
+    /// <param name="time">The time to seek to.</param>
     public void SetAnimationTime(TimeSpan time)
     {
         AnimationController?.Clock.Seek(time);
     }
 
+    /// <summary>Advances the animation by the specified time delta.</summary>
+    /// <param name="delta">The time delta to advance by.</param>
     public void AdvanceAnimation(TimeSpan delta)
     {
         AnimationController?.Clock.AdvanceBy(delta);
     }
 
+    /// <summary>Resets the animation to its initial state.</summary>
     public void ResetAnimation()
     {
         AnimationController?.Reset();
     }
 
+    /// <summary>Notifies the animation controller of a pointer event and refreshes the current frame.</summary>
+    /// <param name="element">The SVG element that received the pointer event.</param>
+    /// <param name="eventType">The type of pointer event.</param>
+    /// <returns><c>true</c> if the event was recorded and the frame refreshed; otherwise, <c>false</c>.</returns>
     public bool NotifyPointerEvent(SvgElement element, SvgPointerEventType eventType)
     {
         if (!RecordAnimationPointerEvent(element, eventType))
@@ -606,6 +736,8 @@ public partial class SKSvg : IDisposable
         return true;
     }
 
+    /// <summary>Flushes the pending animation frame if one exists, rendering it immediately.</summary>
+    /// <returns><c>true</c> if a pending frame was rendered; otherwise, <c>false</c>.</returns>
     public bool FlushPendingAnimationFrame()
     {
         if (_pendingAnimationFrameState is not { } pendingFrameState)
@@ -616,6 +748,14 @@ public partial class SKSvg : IDisposable
         return RenderAnimationFrame(pendingFrameState, raiseInvalidation: true, bypassThrottle: true);
     }
 
+    /// <summary>Saves the current picture as an encoded image to the specified stream.</summary>
+    /// <param name="stream">The stream to write the image to.</param>
+    /// <param name="background">The background color for the image.</param>
+    /// <param name="format">The image encoding format.</param>
+    /// <param name="quality">The encoding quality (0-100).</param>
+    /// <param name="scaleX">The horizontal scale factor.</param>
+    /// <param name="scaleY">The vertical scale factor.</param>
+    /// <returns><c>true</c> if the image was saved successfully; otherwise, <c>false</c>.</returns>
     public bool Save(System.IO.Stream stream, SkiaSharp.SKColor background, SkiaSharp.SKEncodedImageFormat format = SkiaSharp.SKEncodedImageFormat.Png, int quality = 100, float scaleX = 1f, float scaleY = 1f)
     {
         if (Picture is { })
@@ -629,6 +769,14 @@ public partial class SKSvg : IDisposable
         return TrySaveBlankModelImage(stream, background, format, quality, scaleX, scaleY);
     }
 
+    /// <summary>Saves the current picture as an encoded image to the specified file path.</summary>
+    /// <param name="path">The file path to write the image to.</param>
+    /// <param name="background">The background color for the image.</param>
+    /// <param name="format">The image encoding format.</param>
+    /// <param name="quality">The encoding quality (0-100).</param>
+    /// <param name="scaleX">The horizontal scale factor.</param>
+    /// <param name="scaleY">The vertical scale factor.</param>
+    /// <returns><c>true</c> if the image was saved successfully; otherwise, <c>false</c>.</returns>
     public bool Save(string path, SkiaSharp.SKColor background, SkiaSharp.SKEncodedImageFormat format = SkiaSharp.SKEncodedImageFormat.Png, int quality = 100, float scaleX = 1f, float scaleY = 1f)
     {
         using var stream = System.IO.File.Open(path, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite, System.IO.FileShare.None);
@@ -677,6 +825,8 @@ public partial class SKSvg : IDisposable
         return true;
     }
 
+    /// <summary>Draws the SVG picture onto the specified canvas.</summary>
+    /// <param name="canvas">The canvas to draw on.</param>
     public void Draw(SkiaSharp.SKCanvas canvas)
     {
         BeginDraw();
@@ -750,6 +900,7 @@ public partial class SKSvg : IDisposable
         InvalidateRetainedSceneGraph();
     }
 
+    /// <summary>Releases all resources used by this <see cref="SKSvg"/> instance.</summary>
     public void Dispose()
     {
         Reset();

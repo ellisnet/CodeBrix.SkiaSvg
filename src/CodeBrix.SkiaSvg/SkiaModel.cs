@@ -9,6 +9,7 @@ using CodeBrix.SkiaSvg.TypefaceProviders;
 using CodeBrix.SvgParse;
 namespace CodeBrix.SkiaSvg; //Was previously: namespace Svg.Skia;
 
+/// <summary>Maps ShimSkiaSharp intermediate representation types to real SkiaSharp types for rendering.</summary>
 public partial class SkiaModel
 {
     private static readonly char[] s_fontFamilyTrimChars = { '\'', '"' };
@@ -30,23 +31,35 @@ public partial class SkiaModel
         ["cursive"] = new[] { "cursive", "Snell Roundhand", "Comic Sans MS", "Apple Chancery" },
         ["fantasy"] = new[] { "fantasy", "Impact", "Papyrus" }
     };
+    /// <summary>Gets the SVG rendering settings.</summary>
     public SKSvgSettings Settings { get; }
 
+    /// <summary>Initializes a new instance of the <see cref="SkiaModel"/> class.</summary>
+    /// <param name="settings">The SVG rendering settings.</param>
     public SkiaModel(SKSvgSettings settings)
     {
         Settings = settings;
     }
 
+    /// <summary>Converts a shim <see cref="SKPoint"/> to a SkiaSharp point.</summary>
+    /// <param name="point">The shim point.</param>
+    /// <returns>The corresponding SkiaSharp point.</returns>
     public SkiaSharp.SKPoint ToSKPoint(SKPoint point)
     {
         return new(point.X, point.Y);
     }
 
+    /// <summary>Converts a shim <see cref="SKPoint3"/> to a SkiaSharp 3D point.</summary>
+    /// <param name="point3">The shim 3D point.</param>
+    /// <returns>The corresponding SkiaSharp 3D point.</returns>
     public SkiaSharp.SKPoint3 ToSKPoint3(SKPoint3 point3)
     {
         return new(point3.X, point3.Y, point3.Z);
     }
 
+    /// <summary>Converts a list of shim points to an array of SkiaSharp points.</summary>
+    /// <param name="points">The shim points.</param>
+    /// <returns>An array of corresponding SkiaSharp points.</returns>
     public SkiaSharp.SKPoint[] ToSKPoints(IList<SKPoint> points)
     {
         var skPoints = new SkiaSharp.SKPoint[points.Count];
@@ -59,26 +72,41 @@ public partial class SkiaModel
         return skPoints;
     }
 
+    /// <summary>Converts a shim <see cref="SKPointI"/> to a SkiaSharp integer point.</summary>
+    /// <param name="pointI">The shim integer point.</param>
+    /// <returns>The corresponding SkiaSharp integer point.</returns>
     public SkiaSharp.SKPointI ToSKPointI(SKPointI pointI)
     {
         return new(pointI.X, pointI.Y);
     }
 
+    /// <summary>Converts a shim <see cref="SKSize"/> to a SkiaSharp size.</summary>
+    /// <param name="size">The shim size.</param>
+    /// <returns>The corresponding SkiaSharp size.</returns>
     public SkiaSharp.SKSize ToSKSize(SKSize size)
     {
         return new(size.Width, size.Height);
     }
 
+    /// <summary>Converts a shim <see cref="SKSizeI"/> to a SkiaSharp integer size.</summary>
+    /// <param name="sizeI">The shim integer size.</param>
+    /// <returns>The corresponding SkiaSharp integer size.</returns>
     public SkiaSharp.SKSizeI ToSKSizeI(SKSizeI sizeI)
     {
         return new(sizeI.Width, sizeI.Height);
     }
 
+    /// <summary>Converts a shim <see cref="SKRect"/> to a SkiaSharp rectangle.</summary>
+    /// <param name="rect">The shim rectangle.</param>
+    /// <returns>The corresponding SkiaSharp rectangle.</returns>
     public SkiaSharp.SKRect ToSKRect(SKRect rect)
     {
         return new(rect.Left, rect.Top, rect.Right, rect.Bottom);
     }
 
+    /// <summary>Converts a shim <see cref="SKMatrix"/> to a SkiaSharp matrix.</summary>
+    /// <param name="matrix">The shim matrix.</param>
+    /// <returns>The corresponding SkiaSharp matrix.</returns>
     public SkiaSharp.SKMatrix ToSKMatrix(SKMatrix matrix)
     {
         return new(
@@ -93,11 +121,17 @@ public partial class SkiaModel
             matrix.Persp2);
     }
 
+    /// <summary>Converts a shim <see cref="SKImage"/> to a SkiaSharp image.</summary>
+    /// <param name="image">The shim image.</param>
+    /// <returns>The corresponding SkiaSharp image.</returns>
     public SkiaSharp.SKImage ToSKImage(SKImage image)
     {
         return SkiaSharp.SKImage.FromEncodedData(image.Data);
     }
 
+    /// <summary>Converts a shim <see cref="SKPaintStyle"/> to a SkiaSharp paint style.</summary>
+    /// <param name="paintStyle">The shim paint style.</param>
+    /// <returns>The corresponding SkiaSharp paint style.</returns>
     public SkiaSharp.SKPaintStyle ToSKPaintStyle(SKPaintStyle paintStyle)
     {
         return paintStyle switch
@@ -109,6 +143,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKStrokeCap"/> to a SkiaSharp stroke cap.</summary>
+    /// <param name="strokeCap">The shim stroke cap.</param>
+    /// <returns>The corresponding SkiaSharp stroke cap.</returns>
     public SkiaSharp.SKStrokeCap ToSKStrokeCap(SKStrokeCap strokeCap)
     {
         return strokeCap switch
@@ -120,6 +157,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKStrokeJoin"/> to a SkiaSharp stroke join.</summary>
+    /// <param name="strokeJoin">The shim stroke join.</param>
+    /// <returns>The corresponding SkiaSharp stroke join.</returns>
     public SkiaSharp.SKStrokeJoin ToSKStrokeJoin(SKStrokeJoin strokeJoin)
     {
         return strokeJoin switch
@@ -131,6 +171,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKTextAlign"/> to a SkiaSharp text alignment.</summary>
+    /// <param name="textAlign">The shim text alignment.</param>
+    /// <returns>The corresponding SkiaSharp text alignment.</returns>
     public SkiaSharp.SKTextAlign ToSKTextAlign(SKTextAlign textAlign)
     {
         return textAlign switch
@@ -142,6 +185,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKTextEncoding"/> to a SkiaSharp text encoding.</summary>
+    /// <param name="textEncoding">The shim text encoding.</param>
+    /// <returns>The corresponding SkiaSharp text encoding.</returns>
     public SkiaSharp.SKTextEncoding ToSKTextEncoding(SKTextEncoding textEncoding)
     {
         return textEncoding switch
@@ -154,6 +200,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKFontStyleWeight"/> to a SkiaSharp font style weight.</summary>
+    /// <param name="fontStyleWeight">The shim font style weight.</param>
+    /// <returns>The corresponding SkiaSharp font style weight.</returns>
     public SkiaSharp.SKFontStyleWeight ToSKFontStyleWeight(SKFontStyleWeight fontStyleWeight)
     {
         return fontStyleWeight switch
@@ -173,6 +222,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKFontStyleWidth"/> to a SkiaSharp font style width.</summary>
+    /// <param name="fontStyleWidth">The shim font style width.</param>
+    /// <returns>The corresponding SkiaSharp font style width.</returns>
     public SkiaSharp.SKFontStyleWidth ToSKFontStyleWidth(SKFontStyleWidth fontStyleWidth)
     {
         return fontStyleWidth switch
@@ -190,6 +242,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKFontStyleSlant"/> to a SkiaSharp font style slant.</summary>
+    /// <param name="fontStyleSlant">The shim font style slant.</param>
+    /// <returns>The corresponding SkiaSharp font style slant.</returns>
     public SkiaSharp.SKFontStyleSlant ToSKFontStyleSlant(SKFontStyleSlant fontStyleSlant)
     {
         return fontStyleSlant switch
@@ -409,6 +464,9 @@ public partial class SkiaModel
         return resolved;
     }
 
+    /// <summary>Converts a shim <see cref="SKTypeface"/> to a SkiaSharp typeface.</summary>
+    /// <param name="typeface">The shim typeface.</param>
+    /// <returns>The corresponding SkiaSharp typeface.</returns>
     public SkiaSharp.SKTypeface ToSKTypeface(SKTypeface typeface)
     {
         var fontFamily = typeface?.FamilyName;
@@ -519,11 +577,17 @@ public partial class SkiaModel
                candidate.Equals("fantasy", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>Converts a shim <see cref="SKColor"/> to a SkiaSharp color.</summary>
+    /// <param name="color">The shim color.</param>
+    /// <returns>The corresponding SkiaSharp color.</returns>
     public SkiaSharp.SKColor ToSKColor(SKColor color)
     {
         return new(color.Red, color.Green, color.Blue, color.Alpha);
     }
 
+    /// <summary>Converts an array of shim colors to an array of SkiaSharp colors.</summary>
+    /// <param name="colors">The shim colors.</param>
+    /// <returns>An array of corresponding SkiaSharp colors.</returns>
     public SkiaSharp.SKColor[] ToSKColors(SKColor[] colors)
     {
         var skColors = new SkiaSharp.SKColor[colors.Length];
@@ -536,11 +600,17 @@ public partial class SkiaModel
         return skColors;
     }
 
+    /// <summary>Converts a shim <see cref="SKColorF"/> to a SkiaSharp color.</summary>
+    /// <param name="color">The shim floating-point color.</param>
+    /// <returns>The corresponding SkiaSharp color.</returns>
     public SkiaSharp.SKColorF ToSKColor(SKColorF color)
     {
         return new(color.Red, color.Green, color.Blue, color.Alpha);
     }
 
+    /// <summary>Converts an array of shim floating-point colors to an array of SkiaSharp colors.</summary>
+    /// <param name="colors">The shim floating-point colors.</param>
+    /// <returns>An array of corresponding SkiaSharp colors.</returns>
     public SkiaSharp.SKColorF[] ToSKColors(SKColorF[] colors)
     {
         var skColors = new SkiaSharp.SKColorF[colors.Length];
@@ -553,6 +623,9 @@ public partial class SkiaModel
         return skColors;
     }
 
+    /// <summary>Converts a shim <see cref="SKShaderTileMode"/> to a SkiaSharp shader tile mode.</summary>
+    /// <param name="shaderTileMode">The shim shader tile mode.</param>
+    /// <returns>The corresponding SkiaSharp shader tile mode.</returns>
     public SkiaSharp.SKShaderTileMode ToSKShaderTileMode(SKShaderTileMode shaderTileMode)
     {
         return shaderTileMode switch
@@ -565,6 +638,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKShader"/> to a SkiaSharp shader.</summary>
+    /// <param name="shader">The shim shader.</param>
+    /// <returns>The corresponding SkiaSharp shader, or <c>null</c>.</returns>
     public SkiaSharp.SKShader ToSKShader(SKShader shader)
     {
         switch (shader)
@@ -711,6 +787,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="SKColorFilter"/> to a SkiaSharp color filter.</summary>
+    /// <param name="colorFilter">The shim color filter.</param>
+    /// <returns>The corresponding SkiaSharp color filter, or <c>null</c>.</returns>
     public SkiaSharp.SKColorFilter ToSKColorFilter(SKColorFilter colorFilter)
     {
         switch (colorFilter)
@@ -755,6 +834,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="SKColorChannel"/> to a SkiaSharp color channel.</summary>
+    /// <param name="colorChannel">The shim color channel.</param>
+    /// <returns>The corresponding SkiaSharp color channel.</returns>
     public SkiaSharp.SKColorChannel ToSKColorChannel(SKColorChannel colorChannel)
     {
         return colorChannel switch
@@ -790,6 +872,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="SKImageFilter"/> to a SkiaSharp image filter.</summary>
+    /// <param name="imageFilter">The shim image filter.</param>
+    /// <returns>The corresponding SkiaSharp image filter, or <c>null</c>.</returns>
     public SkiaSharp.SKImageFilter ToSKImageFilter(SKImageFilter imageFilter)
     {
         switch (imageFilter)
@@ -1155,6 +1240,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts an array of shim image filters to an array of SkiaSharp image filters.</summary>
+    /// <param name="imageFilters">The shim image filters.</param>
+    /// <returns>An array of corresponding SkiaSharp image filters, or <c>null</c>.</returns>
     public SkiaSharp.SKImageFilter[] ToSKImageFilters(SKImageFilter[] imageFilters)
     {
         if (imageFilters is null)
@@ -1177,6 +1265,9 @@ public partial class SkiaModel
         return skImageFilters;
     }
 
+    /// <summary>Converts a shim <see cref="SKPathEffect"/> to a SkiaSharp path effect.</summary>
+    /// <param name="pathEffect">The shim path effect.</param>
+    /// <returns>The corresponding SkiaSharp path effect, or <c>null</c>.</returns>
     public SkiaSharp.SKPathEffect ToSKPathEffect(SKPathEffect pathEffect)
     {
         switch (pathEffect)
@@ -1194,6 +1285,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="SKBlendMode"/> to a SkiaSharp blend mode.</summary>
+    /// <param name="blendMode">The shim blend mode.</param>
+    /// <returns>The corresponding SkiaSharp blend mode.</returns>
     public SkiaSharp.SKBlendMode ToSKBlendMode(SKBlendMode blendMode)
     {
         return blendMode switch
@@ -1231,6 +1325,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKFilterQuality"/> to a SkiaSharp filter quality.</summary>
+    /// <param name="filterQuality">The shim filter quality.</param>
+    /// <returns>The corresponding SkiaSharp filter quality.</returns>
     public SkiaSharp.SKFilterQuality ToSKFilterQuality(SKFilterQuality filterQuality)
     {
         return filterQuality switch
@@ -1243,6 +1340,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKPaint"/> to a SkiaSharp paint.</summary>
+    /// <param name="paint">The shim paint.</param>
+    /// <returns>The corresponding SkiaSharp paint, or <c>null</c>.</returns>
     public SkiaSharp.SKPaint ToSKPaint(SKPaint paint)
     {
         if (paint is null)
@@ -1381,6 +1481,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="SKClipOperation"/> to a SkiaSharp clip operation.</summary>
+    /// <param name="clipOperation">The shim clip operation.</param>
+    /// <returns>The corresponding SkiaSharp clip operation.</returns>
     public SkiaSharp.SKClipOperation ToSKClipOperation(SKClipOperation clipOperation)
     {
         return clipOperation switch
@@ -1391,6 +1494,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKPathFillType"/> to a SkiaSharp path fill type.</summary>
+    /// <param name="pathFillType">The shim path fill type.</param>
+    /// <returns>The corresponding SkiaSharp path fill type.</returns>
     public SkiaSharp.SKPathFillType ToSKPathFillType(SKPathFillType pathFillType)
     {
         return pathFillType switch
@@ -1401,6 +1507,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a SkiaSharp path fill type to a shim <see cref="SKPathFillType"/>.</summary>
+    /// <param name="pathFillType">The SkiaSharp path fill type.</param>
+    /// <returns>The corresponding shim path fill type.</returns>
     public SKPathFillType FromSKPathFillType(SkiaSharp.SKPathFillType pathFillType)
     {
         return pathFillType switch
@@ -1410,6 +1519,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKPathArcSize"/> to a SkiaSharp path arc size.</summary>
+    /// <param name="pathArcSize">The shim path arc size.</param>
+    /// <returns>The corresponding SkiaSharp path arc size.</returns>
     public SkiaSharp.SKPathArcSize ToSKPathArcSize(SKPathArcSize pathArcSize)
     {
         return pathArcSize switch
@@ -1420,6 +1532,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Converts a shim <see cref="SKPathDirection"/> to a SkiaSharp path direction.</summary>
+    /// <param name="pathDirection">The shim path direction.</param>
+    /// <returns>The corresponding SkiaSharp path direction.</returns>
     public SkiaSharp.SKPathDirection ToSKPathDirection(SKPathDirection pathDirection)
     {
         return pathDirection switch
@@ -1430,6 +1545,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Appends a shim path command to a SkiaSharp path.</summary>
+    /// <param name="pathCommand">The shim path command.</param>
+    /// <param name="skPath">The SkiaSharp path to append to.</param>
     public void ToSKPath(PathCommand pathCommand, SkiaSharp.SKPath skPath)
     {
         switch (pathCommand)
@@ -1526,6 +1644,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="SKPath"/> to a SkiaSharp path.</summary>
+    /// <param name="path">The shim path.</param>
+    /// <returns>The corresponding SkiaSharp path.</returns>
     public SkiaSharp.SKPath ToSKPath(SKPath path)
     {
         var skPath = new SkiaSharp.SKPath
@@ -1546,6 +1667,9 @@ public partial class SkiaModel
         return skPath;
     }
 
+    /// <summary>Converts a SkiaSharp path to a shim <see cref="SKPath"/>.</summary>
+    /// <param name="skPath">The SkiaSharp path.</param>
+    /// <returns>The corresponding shim path.</returns>
     public SKPath FromSKPath(SkiaSharp.SKPath skPath)
     {
         var path = new SKPath
@@ -1582,6 +1706,9 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Converts a shim <see cref="ClipPath"/> to a SkiaSharp path.</summary>
+    /// <param name="clipPath">The shim clip path.</param>
+    /// <returns>The corresponding SkiaSharp path, or <c>null</c>.</returns>
     public SkiaSharp.SKPath ToSKPath(ClipPath clipPath)
     {
         if (clipPath?.Clips is null)
@@ -1639,6 +1766,9 @@ public partial class SkiaModel
         return skPathResult;
     }
 
+    /// <summary>Converts a shim <see cref="SKPicture"/> to a SkiaSharp picture.</summary>
+    /// <param name="picture">The shim picture.</param>
+    /// <returns>The corresponding SkiaSharp picture, or <c>null</c>.</returns>
     public SkiaSharp.SKPicture ToSKPicture(SKPicture picture)
     {
         if (picture is null)
@@ -1662,6 +1792,9 @@ public partial class SkiaModel
         return skPictureRecorder.EndRecording();
     }
 
+    /// <summary>Converts a shim <see cref="SKPicture"/> to a wireframe SkiaSharp picture.</summary>
+    /// <param name="picture">The shim picture.</param>
+    /// <returns>The corresponding wireframe SkiaSharp picture, or <c>null</c>.</returns>
     public SkiaSharp.SKPicture ToWireframePicture(SKPicture picture)
     {
         if (picture is null)
@@ -1697,6 +1830,10 @@ public partial class SkiaModel
         skCanvas.DrawRect(skRect, paint);
     }
 
+    /// <summary>Draws a canvas command to the specified SkiaSharp canvas.</summary>
+    /// <param name="canvasCommand">The canvas command to draw.</param>
+    /// <param name="skCanvas">The target SkiaSharp canvas.</param>
+    /// <param name="wireframe">Whether to draw in wireframe mode.</param>
     public void Draw(CanvasCommand canvasCommand, SkiaSharp.SKCanvas skCanvas, bool wireframe = false)
     {
         switch (canvasCommand)
@@ -1860,6 +1997,10 @@ public partial class SkiaModel
         }
     }
 
+    /// <summary>Draws a shim picture to the specified SkiaSharp canvas.</summary>
+    /// <param name="picture">The shim picture to draw.</param>
+    /// <param name="skCanvas">The target SkiaSharp canvas.</param>
+    /// <param name="wireframe">Whether to draw in wireframe mode.</param>
     public void Draw(SKPicture picture, SkiaSharp.SKCanvas skCanvas, bool wireframe = false)
     {
         if (picture.Commands is null)
@@ -1909,6 +2050,9 @@ public partial class SkiaModel
         };
     }
 
+    /// <summary>Draws a shim picture in wireframe mode to the specified SkiaSharp canvas.</summary>
+    /// <param name="picture">The shim picture to draw.</param>
+    /// <param name="skCanvas">The target SkiaSharp canvas.</param>
     public void DrawWireframe(SKPicture picture, SkiaSharp.SKCanvas skCanvas)
     {
         Draw(picture, skCanvas, true);
