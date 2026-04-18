@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using CodeBrix.SkiaSvg.ShimSkiaSharp;
 using Xunit;
 
@@ -150,8 +151,9 @@ public class SkiaModelTextApiTests
     // 3. GetFontMetrics returns plausible non-default metrics
     // ---------------------------------------------------------------
 
-    [Fact]
-    public void GetFontMetrics_ReturnsNonDefaultMetrics()
+    [Theory]
+    [InlineData(0.5f)]
+    public void GetFontMetrics_ReturnsNonDefaultMetrics(float linuxDifferenceTolerance)
     {
         var assetLoader = CreateAssetLoader();
         var paint = new SKPaint
@@ -166,11 +168,25 @@ public class SkiaModelTextApiTests
 
         var metrics = assetLoader.GetFontMetrics(paint);
 
+        //On Linux, "sans-serif" resolves to DejaVu Sans (or similar), whose Top
+        //  and Ascent are reported essentially equal (e.g. -21.34 vs -21.38 at
+        //  20pt) -- within rounding of each other rather than satisfying the
+        //  strict Top<=Ascent ordering that holds on Windows/macOS. So we allow
+        //  a small tolerance for that specific platform, but require exact
+        //  ordering on all other platforms (so far).
+        //  Other platforms can have exceptions too, in the future - if we
+        //  encounter the same minor calculated difference.
+        var tolerance = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+            ? linuxDifferenceTolerance
+            : 0f;
+
         // Ascent and Top should be negative; Descent and Bottom positive
         Assert.True(metrics.Ascent < 0, $"Expected negative Ascent, got {metrics.Ascent}");
         Assert.True(metrics.Descent > 0, $"Expected positive Descent, got {metrics.Descent}");
-        Assert.True(metrics.Top <= metrics.Ascent, $"Top ({metrics.Top}) should be <= Ascent ({metrics.Ascent})");
-        Assert.True(metrics.Bottom >= metrics.Descent, $"Bottom ({metrics.Bottom}) should be >= Descent ({metrics.Descent})");
+        Assert.True(metrics.Top <= metrics.Ascent + tolerance,
+            $"Top ({metrics.Top}) should be <= Ascent ({metrics.Ascent}) (tolerance {tolerance})");
+        Assert.True(metrics.Bottom >= metrics.Descent - tolerance,
+            $"Bottom ({metrics.Bottom}) should be >= Descent ({metrics.Descent}) (tolerance {tolerance})");
     }
 
     // ---------------------------------------------------------------
