@@ -36,6 +36,21 @@ Requirements: .NET 10.0 or higher
 License: MIT License
 
 
+PINNED SKIASHARP DEPENDENCY (TEMPORARY)
+---------------------------------------
+CodeBrix.SkiaSvg is currently pinned to SkiaSharp 3.119.3-preview.1.1
+rather than the latest stable SkiaSharp release. This is intentional:
+the previous stable release (SkiaSharp 3.119.2) is missing native
+libraries for ARM64 and RISC-V 64 platforms, so consuming CodeBrix.SkiaSvg
+from those platforms with the stable release fails at load time on the
+missing native assets.
+
+When a stable SkiaSharp release ships that includes the ARM64 and
+RISC-V 64 native assets, CodeBrix.SkiaSvg will move back to a stable
+SkiaSharp reference. Update SkiaSharp (and SkiaSharp.NativeAssets.Linux
+in the test project) together -- both projects must stay in lock-step.
+
+
 KEY NAMESPACES
 --------------
     using CodeBrix.SkiaSvg;                      // Main API (SKSvg, etc.)

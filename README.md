@@ -9,6 +9,10 @@ Please update your C#/.NET code and projects to the latest LTS version of Micros
 
 CodeBrix.SkiaSvg is a fork of the code of the open source Svg.Skia library (and several of its companion packages) - see below for licensing details.
 
+## Pinned SkiaSharp dependency (temporary)
+
+The `CodeBrix.SkiaSvg.MitLicenseForever` NuGet package is currently pinned to **SkiaSharp 3.119.3-preview.1.1** rather than the latest stable SkiaSharp release. This is intentional: the previous stable release (SkiaSharp 3.119.2) is missing native libraries for **ARM64** and **RISC-V 64** platforms, so depending on the stable release fails at load time on those platforms. When a stable SkiaSharp release ships that includes the missing native assets, CodeBrix.SkiaSvg will move back to a stable SkiaSharp reference.
+
 ## CodeBrix.SkiaSvg supports:
 
 * SVG loading from files, streams, strings, and XmlReaders
