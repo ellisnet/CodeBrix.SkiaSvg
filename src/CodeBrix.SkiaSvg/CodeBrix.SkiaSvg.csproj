@@ -8,7 +8,7 @@
 
     <!-- NuGet package properties -->
     <PackageId>CodeBrix.SkiaSvg.MitLicenseForever</PackageId>
-    <Version>1.0.106</Version>
+    <Version>1.0.117</Version>
     <Product>CodeBrix.SkiaSvg</Product>
     <Title>CodeBrix.SkiaSvg</Title>
     <Authors>Jeremy Ellis</Authors>
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeBrix.SvgParse.MsplLicenseForever" Version="1.0.102" />
+    <PackageReference Include="CodeBrix.SvgParse.MsplLicenseForever" Version="1.0.117" />
     <!--
       Pinned to SkiaSharp 3.119.3-preview.1.1 (not the latest stable) because the
       previous stable SkiaSharp release (3.119.2) is missing native libraries for
