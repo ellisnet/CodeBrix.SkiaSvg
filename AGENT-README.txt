@@ -876,6 +876,25 @@ Feature-to-test-file mapping:
   resvg compatibility tests:
     -> tests/CodeBrix.SkiaSvg.Tests/resvgTests.cs
 
+  EXTERNAL TEST CORPORA (used by the two suites above):
+    The W3C and resvg suites render SVG files and pixel-compare them against
+    reference PNGs that are NOT authored by this project and are NOT in the
+    NuGet package. They are committed to the repo under externals/, so they are
+    present after a normal clone -- no fetch or setup step on any machine:
+        externals/resvg/tests/{svg,png}/                     (MPL-2.0)
+        externals/W3C_SVG_11_TestSuite/W3C_SVG_11_TestSuite/{svg,png}/  (W3C)
+    These are pinned to the commits used by upstream Svg.Skia v4.2.0. See
+    externals/README.md and THIRD-PARTY-NOTICES.txt for the exact upstream
+    repositories, commit hashes, provenance, and licenses.
+
+    Platform gating (the [OSXTheory] attribute + Common/LinuxTestGate.cs):
+      * macOS  -- the canonical baseline; runs every resvg and W3C case.
+      * Linux  -- runs the resvg suite (geometry/paint/filter match exactly),
+                  skipping a known set of text-only rasterization divergences
+                  (FreeType vs CoreText); the W3C suite is skipped (its renders
+                  diverge broadly off macOS and are not yet portable).
+      * Other (e.g. Windows) -- both suites are skipped.
+
   SkiaModel text, font, and filter-quality API (post-CS0618 migration):
     -> tests/CodeBrix.SkiaSvg.Tests/SkiaModelTextApiTests.cs
 
