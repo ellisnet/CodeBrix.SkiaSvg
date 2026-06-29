@@ -77,11 +77,11 @@
 
   <ItemGroup>
     <PackageReference Include="CodeBrix.SvgParse.MsplLicenseForever" Version="1.0.165.135" />
-    <PackageReference Include="SkiaSharp" Version="3.119.4" />
-    <PackageReference Include="HarfBuzzSharp" Version="8.3.1.5" />
-    <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="8.3.1.5" />
-    <PackageReference Include="HarfBuzzSharp.NativeAssets.macOS" Version="8.3.1.5" />
-    <PackageReference Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.5" />
+    <PackageReference Include="SkiaSharp" Version="4.148.0" />
+    <PackageReference Include="HarfBuzzSharp" Version="14.2.0" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="14.2.0" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.macOS" Version="14.2.0" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.Win32" Version="14.2.0" />
   </ItemGroup>
 
 </Project>
