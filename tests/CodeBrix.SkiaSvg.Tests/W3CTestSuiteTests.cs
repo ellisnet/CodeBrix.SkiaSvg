@@ -297,6 +297,10 @@ public class W3CTestSuiteTests : SvgUnitTest
             "text-align-04-b" => 0.046,
             "text-align-05-b" => 0.048,
             "text-align-06-b" => 0.053,
+            // Bare generic `monospace` keyword resolves to a lighter Courier/Menlo-class face here than
+            // the heavier mono font in the Chrome capture; weight is normal in both. Residual delta is
+            // font substitution plus SkiaSharp 4 / HarfBuzz 14 text rasterization, not a layout difference.
+            "text-fonts-01-t" => 0.026,
             "text-fonts-02-t" => 0.031,
             "text-fonts-03-t" => 0.029,
             "text-fonts-04-t" => 0.029,
