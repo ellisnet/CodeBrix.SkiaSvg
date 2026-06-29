@@ -36,22 +36,18 @@ Requirements: .NET 10.0 or higher
 License: MIT License
 
 
-PINNED SKIASHARP DEPENDENCY (TEMPORARY)
----------------------------------------
-CodeBrix.SkiaSvg is currently pinned to a SkiaSharp preview release rather
-than the latest stable SkiaSharp release. This is intentional: the
-corresponding stable SkiaSharp release is missing native libraries for
-ARM64 and RISC-V 64 platforms, so consuming CodeBrix.SkiaSvg from those
-platforms with the stable release fails at load time on the missing
-native assets.
+SKIASHARP / HARFBUZZSHARP DEPENDENCIES
+--------------------------------------
+CodeBrix.SkiaSvg targets SkiaSharp 4.148.0 and HarfBuzzSharp 14.2.0 (a
+matched release pair from the SkiaSharp family). The exact versions are
+recorded in the `<PackageReference ... />` lines in
+`src/CodeBrix.SkiaSvg/CodeBrix.SkiaSvg.csproj`.
 
-When a stable SkiaSharp release ships that includes the ARM64 and
-RISC-V 64 native assets, CodeBrix.SkiaSvg will move back to a stable
-SkiaSharp reference. The exact pinned version is recorded in the
-`<PackageReference Include="SkiaSharp" ... />` line in
-`src/CodeBrix.SkiaSvg/CodeBrix.SkiaSvg.csproj` (see the comment block
-above that line). Update SkiaSharp (and SkiaSharp.NativeAssets.Linux in
-the test project) together -- both projects must stay in lock-step.
+The library project and the test project must stay in lock-step: when
+bumping versions, update SkiaSharp (and SkiaSharp.NativeAssets.Linux in
+the test project) and the HarfBuzzSharp* packages together. SkiaSharp and
+HarfBuzzSharp carry independent version numbers but ship as a matched set,
+so move them to their corresponding versions at the same time.
 
 
 KEY NAMESPACES

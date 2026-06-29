@@ -556,9 +556,10 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
             return false;
         }
 
+        using var font = new SkiaSharp.SKFont(typeface);
         for (var i = 0; i < codepoints.Count; i++)
         {
-            if (!typeface.ContainsGlyph(codepoints[i]))
+            if (!font.ContainsGlyph(codepoints[i]))
             {
                 return false;
             }
@@ -626,9 +627,13 @@ public partial class SkiaSvgAssetLoader : Model.ISvgAssetLoader, Model.ISvgTextR
         foreach (var provider in _skiaModel.Settings.TypefaceProviders)
         {
             var typeface = GetProviderTypeface(provider, familyKey, weight, width, slant);
-            if (typeface is { } && typeface.ContainsGlyph(codepoint))
+            if (typeface is { })
             {
-                return typeface;
+                using var font = new SkiaSharp.SKFont(typeface);
+                if (font.ContainsGlyph(codepoint))
+                {
+                    return typeface;
+                }
             }
         }
 

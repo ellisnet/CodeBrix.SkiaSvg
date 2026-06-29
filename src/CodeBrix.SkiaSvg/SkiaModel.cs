@@ -1550,7 +1550,7 @@ public partial class SkiaModel
     /// <summary>Appends a shim path command to a SkiaSharp path.</summary>
     /// <param name="pathCommand">The shim path command.</param>
     /// <param name="skPath">The SkiaSharp path to append to.</param>
-    public void ToSKPath(PathCommand pathCommand, SkiaSharp.SKPath skPath)
+    public void ToSKPath(PathCommand pathCommand, SkiaSharp.SKPathBuilder skPath)
     {
         switch (pathCommand)
         {
@@ -1651,14 +1651,14 @@ public partial class SkiaModel
     /// <returns>The corresponding SkiaSharp path.</returns>
     public SkiaSharp.SKPath ToSKPath(SKPath path)
     {
-        var skPath = new SkiaSharp.SKPath
+        using var skPath = new SkiaSharp.SKPathBuilder
         {
             FillType = ToSKPathFillType(path.FillType)
         };
 
         if (path.Commands is null)
         {
-            return skPath;
+            return skPath.Snapshot();
         }
 
         foreach (var pathCommand in path.Commands)
@@ -1666,7 +1666,7 @@ public partial class SkiaModel
             ToSKPath(pathCommand, skPath);
         }
 
-        return skPath;
+        return skPath.Snapshot();
     }
 
     /// <summary>Converts a SkiaSharp path to a shim <see cref="SKPath"/>.</summary>
@@ -1896,8 +1896,9 @@ public partial class SkiaModel
                     {
                         if (wireframe)
                         {
-                            var rectPath = new SkiaSharp.SKPath();
-                            rectPath.AddRect(ToSKRect(drawImageCanvasCommand.Dest));
+                            using var rectPathBuilder = new SkiaSharp.SKPathBuilder();
+                            rectPathBuilder.AddRect(ToSKRect(drawImageCanvasCommand.Dest));
+                            using var rectPath = rectPathBuilder.Snapshot();
                             skCanvas.DrawPath(rectPath, ToWireframePaint(null));
                         }
                         else
