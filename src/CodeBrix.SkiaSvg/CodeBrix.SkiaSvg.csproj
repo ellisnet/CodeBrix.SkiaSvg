@@ -77,7 +77,7 @@
 
   <ItemGroup>
     <PackageReference Include="CodeBrix.SvgParse.MsplLicenseForever" Version="1.0.165.135" />
-    <PackageReference Include="SkiaSharp" Version="4.148.0" />
+    <PackageReference Include="SkiaSharp" Version="4.150.0" />
     <PackageReference Include="HarfBuzzSharp" Version="14.2.0" />
     <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="14.2.0" />
     <PackageReference Include="HarfBuzzSharp.NativeAssets.macOS" Version="14.2.0" />

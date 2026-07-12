@@ -11,7 +11,7 @@ CodeBrix.SkiaSvg is a fork of the code of the open source Svg.Skia library (and 
 
 ## SkiaSharp dependency
 
-The `CodeBrix.SkiaSvg.MitLicenseForever` NuGet package depends on **SkiaSharp 4.148.0** and **HarfBuzzSharp 14.2.0** — a matched stable release pair. These ship native assets for all supported platforms, including **ARM64**, so no preview build or platform-specific workaround is required.
+The `CodeBrix.SkiaSvg.MitLicenseForever` NuGet package depends on **SkiaSharp 4.150.0** and **HarfBuzzSharp 14.2.0** — a matched stable release pair. These ship native assets for all supported platforms, including **ARM64**, so no preview build or platform-specific workaround is required.
 
 ## CodeBrix.SkiaSvg supports:
 
