@@ -15,8 +15,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.2.2" />
-    <PackageReference Include="SkiaSharp" Version="4.150.0" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.150.0" />
+    <PackageReference Include="SkiaSharp" Version="4.150.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.150.1" />
     <PackageReference Include="CodeBrix.Imaging.ApacheLicenseForever" Version="1.0.164.1087" />
   </ItemGroup>
 
