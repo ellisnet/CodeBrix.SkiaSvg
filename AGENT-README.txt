@@ -650,6 +650,16 @@ PERFORMANCE TIPS
 
 7. Use ToBitmap() with appropriate SKColorType for your platform to avoid
    unnecessary color format conversion.
+   SHARP EDGE (verified 2026-07-29): ToBitmap()/Draw() scale by
+   CullRect.Width/Height but do NOT translate by CullRect.Left/Top - an SVG
+   whose content bounds do not start at (0,0) comes out clipped/offset. For
+   such files rasterize by hand: create the SKBitmap, then
+   canvas.Scale(scale); canvas.Translate(-CullRect.Left, -CullRect.Top);
+   canvas.DrawPicture(svg.Picture). Also note ToBitmap truncates
+   (int)(Width * scale) rather than rounding.
+   SHARP EDGE: CreateFromStream()/Load() on non-SVG bytes throws (e.g.
+   System.Xml.XmlException) rather than returning null - wrap the load in
+   try/catch when the input is untrusted (user files, zip entries).
 
 8. For batch export, load the SVG once and call Save() or the extension
    methods multiple times.
