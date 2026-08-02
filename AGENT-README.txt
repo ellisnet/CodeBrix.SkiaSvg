@@ -38,7 +38,7 @@ License: MIT License
 
 SKIASHARP / HARFBUZZSHARP DEPENDENCIES
 --------------------------------------
-CodeBrix.SkiaSvg targets SkiaSharp 4.150.1 and HarfBuzzSharp 14.2.1.1 (a
+CodeBrix.SkiaSvg targets SkiaSharp 4.151.0 and HarfBuzzSharp 14.2.1.1 (a
 matched release pair from the SkiaSharp family). The exact versions are
 recorded in the `<PackageReference ... />` lines in
 `src/CodeBrix.SkiaSvg/CodeBrix.SkiaSvg.csproj`.
