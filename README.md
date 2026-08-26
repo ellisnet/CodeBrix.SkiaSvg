@@ -9,9 +9,38 @@ Please update your C#/.NET code and projects to the latest LTS version of Micros
 
 CodeBrix.SkiaSvg is a fork of the code of the open source Svg.Skia library (and several of its companion packages) - see below for licensing details.
 
-## SkiaSharp dependency
+## Installation
 
-The `CodeBrix.SkiaSvg.MitLicenseForever` NuGet package depends on **SkiaSharp 4.151.0** and **HarfBuzzSharp 14.2.1.1** — a matched stable release pair. These ship native assets for all supported platforms, including **ARM64**, so no preview build or platform-specific workaround is required.
+```
+dotnet add package CodeBrix.SkiaSvg.MitLicenseForever
+```
+
+Note that the NuGet package ID and the namespace are different - there is no package named plain `CodeBrix.SkiaSvg`:
+
+* NuGet package ID: `CodeBrix.SkiaSvg.MitLicenseForever`
+* Assembly and primary namespace: `CodeBrix.SkiaSvg` - i.e. `using CodeBrix.SkiaSvg;`
+
+XML documentation (IntelliSense) ships alongside the assembly.
+
+## Dependencies
+
+The package pulls in the following automatically; no version pinning is needed in the consuming project:
+
+* `CodeBrix.SvgParse.MsplLicenseForever` - the SVG document object model and parser. Note that this package is licensed under the Microsoft Public License (Ms-PL) rather than MIT.
+* **SkiaSharp 4.151.0** - the rendering engine
+* **HarfBuzzSharp 14.2.1.1** plus its Linux, macOS and Win32 native-asset packages - text shaping
+
+SkiaSharp and HarfBuzzSharp are a matched stable release pair, with native assets covering **ARM64** as well as x64.
+
+### Native assets: one package your application must add
+
+The HarfBuzz native binaries arrive transitively with this package, but **the SkiaSharp native binaries do not**. A consuming application must add the SkiaSharp native-asset package for each platform it runs on - for example, a Linux console or service app adds:
+
+```
+dotnet add package SkiaSharp.NativeAssets.Linux
+```
+
+Use the `SkiaSharp.NativeAssets.macOS` or `SkiaSharp.NativeAssets.Win32` variant per platform. Without the matching package the project still compiles, and then fails at run time on the first SkiaSharp call with a native-library load error.
 
 ## CodeBrix.SkiaSvg supports:
 
@@ -54,7 +83,7 @@ svg.Save("output.png", SKColors.White, SKEncodedImageFormat.Png, 100, 1f, 1f);
 
 ```csharp
 using CodeBrix.SkiaSvg;
-using SkiaSharp;
+using CodeBrix.SkiaSvg.ShimSkiaSharp; // hit testing uses this SKPoint, not SkiaSharp's
 
 using var svg = SKSvg.CreateFromFile("interactive.svg");
 
@@ -62,9 +91,12 @@ var point = new SKPoint(100, 100);
 var element = svg.HitTestTopmostElement(point);
 if (element != null)
 {
-    Console.WriteLine($"Hit: {element.ElementName} (ID: {element.ID})");
+    // There is no public element.ElementName; identify elements by CLR type.
+    Console.WriteLine($"Hit: {element.GetType().Name} (ID: {element.ID})");
 }
 ```
+
+Note that the hit-testing, coordinate-conversion and scene-graph APIs take the `CodeBrix.SkiaSvg.ShimSkiaSharp` `SKPoint`, `SKRect` and `SKMatrix` types, while `SKSvg.Picture` and the drawing calls take the real SkiaSharp types. Both namespaces declare a type named `SKPoint`, so importing the wrong one produces a confusing conversion error.
 
 ### Load from SVG String
 
@@ -78,7 +110,14 @@ using var svg = SKSvg.CreateFromSvg(svgContent);
 canvas.DrawPicture(svg.Picture);
 ```
 
-Note that additional sample code and usage examples are available in the `CodeBrix.SkiaSvg.Tests` project.
+## Documentation
+
+The NuGet package includes `AGENT-README.txt`, a complete API reference and usage guide written for AI coding agents - point your agent at that file when it is writing code against this library.
+
+This library renders and inspects SVG; it does not author it. The SVG document object model - `SvgDocument`, `SvgElement` and the element types - comes from the `CodeBrix.SvgParse.MsplLicenseForever` package, and DOM-level manipulation belongs there. Read that package's own `AGENT-README.txt` for the element and attribute model.
+
+Additional sample code and usage examples are available in the `CodeBrix.SkiaSvg.Tests` project:
+https://github.com/ellisnet/CodeBrix.SkiaSvg/tree/main/tests/CodeBrix.SkiaSvg.Tests
 
 ## License
 

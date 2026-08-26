@@ -335,7 +335,10 @@ Example:
     var element = svg.HitTestTopmostElement(new SKPoint(100, 50));
     if (element != null)
     {
-        Console.WriteLine($"Hit: {element.ElementName}");
+        // SvgElement.ElementName is protected internal in CodeBrix.SvgParse
+        // and is NOT reachable from a consumer assembly; identify the element
+        // by its CLR type instead.
+        Console.WriteLine($"Hit: {element.GetType().Name} (ID: {element.ID})");
     }
 
 Hit results come back in rendering order; HitTestTopmostElement returns the
@@ -1186,7 +1189,7 @@ Example 4: Hit testing
 
     foreach (var el in svg.HitTestElements(new SKPoint(150, 75)))
     {
-        Console.WriteLine($"Element: {el.ElementName}");
+        Console.WriteLine($"Element: {el.GetType().Name}");
         if (el is SvgVisualElement visual)
         {
             Console.WriteLine($"  Fill: {visual.Fill}");
@@ -1194,7 +1197,7 @@ Example 4: Hit testing
     }
 
     var top = svg.HitTestTopmostElement(new SKPoint(150, 75));
-    Console.WriteLine($"Topmost: {top?.ElementName}");
+    Console.WriteLine($"Topmost: {top?.GetType().Name}");
 
 
 Example 5: Animation playback
