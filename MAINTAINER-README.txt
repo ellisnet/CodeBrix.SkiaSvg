@@ -89,9 +89,16 @@ REPOSITORY LAYOUT
                                      PROVENANCE AND VENDORED SOURCES)
 
     CodeBrix.SkiaSvg.slnx            the solution; its Solution Items folder
-                                     carries AGENT-README.txt,
-                                     icon-codebrix-128.png, LICENSE, README.md
-                                     and THIRD-PARTY-NOTICES.txt
+                                     carries .gitignore, AGENT-README.txt,
+                                     EXTRAS-README.txt, global.json,
+                                     icon-codebrix-128.png, LICENSE,
+                                     MAINTAINER-README.txt, README-INDEX.txt,
+                                     README.md and THIRD-PARTY-NOTICES.txt;
+                                     its Tests folder carries the test project
+
+    global.json                      selects the Microsoft.Testing.Platform
+                                     test runner. Does NOT pin an SDK version.
+                                     See TESTING below.
 
 Source folders map to namespaces EXCEPT for Interaction/, SceneGraph/ and
 Animation/, whose types are deliberately declared in the plain
@@ -133,6 +140,19 @@ the single source of truth for them.
 TESTING
 =======
     dotnet test CodeBrix.SkiaSvg.slnx
+
+THE TEST RUNNER IS Microsoft.Testing.Platform (MTP), selected by global.json at
+the repo root:
+
+    { "test": { "runner": "Microsoft.Testing.Platform" } }
+
+That file does NOT pin an SDK version, so the newest installed .NET 10 SDK is
+still used; it exists solely to select the runner. Because the setting lives in
+global.json rather than in the csproj, it applies to every `dotnet test` run
+anywhere in the repository, including CI. Keep the file committed - without it,
+`dotnet test` silently falls back to the older VSTest bridge. You can tell which
+one ran: MTP output ends in a "Test run summary:" block, while the VSTest bridge
+invokes MSBuild with `--target:VSTest`.
 
 The test project is xUnit v3 (with xunit.runner.visualstudio and
 Microsoft.NET.Test.Sdk) and also references CodeBrix.Imaging for image

@@ -7,8 +7,6 @@ CodeBrix.SkiaSvg supports applications and assemblies that target Microsoft .NET
 Microsoft .NET version 10.0 is a Long-Term Supported (LTS) version of .NET, and was released on Nov 11, 2025; and will be actively supported by Microsoft until Nov 14, 2028.
 Please update your C#/.NET code and projects to the latest LTS version of Microsoft .NET.
 
-CodeBrix.SkiaSvg is a fork of the code of the open source Svg.Skia library (and several of its companion packages) - see below for licensing details.
-
 ## Installation
 
 ```
@@ -22,25 +20,13 @@ Note that the NuGet package ID and the namespace are different - there is no pac
 
 XML documentation (IntelliSense) ships alongside the assembly.
 
-## Dependencies
-
 The package pulls in the following automatically; no version pinning is needed in the consuming project:
 
 * `CodeBrix.SvgParse.MsplLicenseForever` - the SVG document object model and parser. Note that this package is licensed under the Microsoft Public License (Ms-PL) rather than MIT.
-* **SkiaSharp 4.151.0** - the rendering engine
-* **HarfBuzzSharp 14.2.1.1** plus its Linux, macOS and Win32 native-asset packages - text shaping
+* `SkiaSharp` - the rendering engine
+* `HarfBuzzSharp` plus its Linux, macOS and Win32 native-asset packages - text shaping
 
-SkiaSharp and HarfBuzzSharp are a matched stable release pair, with native assets covering **ARM64** as well as x64.
-
-### Native assets: one package your application must add
-
-The HarfBuzz native binaries arrive transitively with this package, but **the SkiaSharp native binaries do not**. A consuming application must add the SkiaSharp native-asset package for each platform it runs on - for example, a Linux console or service app adds:
-
-```
-dotnet add package SkiaSharp.NativeAssets.Linux
-```
-
-Use the `SkiaSharp.NativeAssets.macOS` or `SkiaSharp.NativeAssets.Win32` variant per platform. Without the matching package the project still compiles, and then fails at run time on the first SkiaSharp call with a native-library load error.
+SkiaSharp and HarfBuzzSharp are referenced as a matched pair, and their native assets cover **ARM64** as well as x64.
 
 ## CodeBrix.SkiaSvg supports:
 
@@ -57,6 +43,16 @@ Use the `SkiaSharp.NativeAssets.macOS` or `SkiaSharp.NativeAssets.Win32` variant
 * Text shaping via HarfBuzz
 * Wireframe debug rendering
 * Many more...
+
+## Native assets: one package your application must add
+
+The HarfBuzz native binaries arrive transitively with this package, but **the SkiaSharp native binaries do not**. A consuming application must add the SkiaSharp native-asset package for each platform it runs on - for example, a Linux console or service app adds:
+
+```
+dotnet add package SkiaSharp.NativeAssets.Linux
+```
+
+Use the `SkiaSharp.NativeAssets.macOS` or `SkiaSharp.NativeAssets.Win32` variant per platform. Without the matching package the project still compiles, and then fails at run time on the first SkiaSharp call with a native-library load error.
 
 ## Sample Code
 
@@ -121,7 +117,8 @@ https://github.com/ellisnet/CodeBrix.SkiaSvg/tree/main/tests/CodeBrix.SkiaSvg.Te
 
 ## License
 
-The project is licensed under the MIT License. see: https://en.wikipedia.org/wiki/MIT_License
+CodeBrix.SkiaSvg is licensed under the MIT License - see the
+[LICENSE](https://github.com/ellisnet/CodeBrix.SkiaSvg/blob/main/LICENSE) file.
 
-All code originating from Svg.Skia was included as allowed by the MIT License permissible open source software license - as of Svg.Skia version 4.2.0.
-This project (CodeBrix.SkiaSvg) complies with all provisions of the source code license of Svg.Skia v4.2.0 (MIT License).
+For licensing and provenance information about the open source code included in
+this package, see [THIRD-PARTY-NOTICES.txt](https://github.com/ellisnet/CodeBrix.SkiaSvg/blob/main/THIRD-PARTY-NOTICES.txt).

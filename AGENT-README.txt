@@ -14,8 +14,8 @@ incremental mutation, SMIL animation playback, layer-based native
 composition, pointer-event dispatch, an editing/inspection API over the
 intermediate drawing model, and export to raster and vector formats.
 
-CodeBrix.SkiaSvg is a fork of the Svg.Skia project (v4.2.0), consolidating
-several companion packages of that ecosystem into a single library. Every
+CodeBrix.SkiaSvg is a fork of the Svg.Skia project, consolidating several
+companion packages of that ecosystem into a single library. Every
 namespace is rooted at "CodeBrix.SkiaSvg", mapped from upstream like this:
 
     Svg.Skia                    -> CodeBrix.SkiaSvg
