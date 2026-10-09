@@ -777,16 +777,22 @@ public partial class SKSvg : IDisposable
     /// <param name="scaleX">The horizontal scale factor.</param>
     /// <param name="scaleY">The vertical scale factor.</param>
     /// <returns><c>true</c> if the image was saved successfully; otherwise, <c>false</c>.</returns>
+    /// <remarks>
+    /// The image is encoded in memory first and the file is created only when encoding succeeds, so a
+    /// failure (for example an encoding format SkiaSharp cannot write) creates no file and leaves an
+    /// existing file at <paramref name="path"/> untouched.
+    /// </remarks>
     public bool Save(string path, SkiaSharp.SKColor background, SkiaSharp.SKEncodedImageFormat format = SkiaSharp.SKEncodedImageFormat.Png, int quality = 100, float scaleX = 1f, float scaleY = 1f)
     {
-        using var stream = System.IO.File.Open(path, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite, System.IO.FileShare.None);
-        if (Save(stream, background, format, quality, scaleX, scaleY))
+        using var encoded = new System.IO.MemoryStream();
+        if (!Save(encoded, background, format, quality, scaleX, scaleY))
         {
-            return true;
+            return false;
         }
 
-        stream.SetLength(0);
-        return false;
+        using var stream = System.IO.File.Open(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+        encoded.WriteTo(stream);
+        return true;
     }
 
     private bool TrySaveBlankModelImage(System.IO.Stream stream, SkiaSharp.SKColor background, SkiaSharp.SKEncodedImageFormat format, int quality, float scaleX, float scaleY)

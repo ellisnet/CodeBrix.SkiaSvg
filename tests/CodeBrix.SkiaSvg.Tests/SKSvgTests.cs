@@ -36,6 +36,83 @@ public class SKSvgTests : SvgUnitTest
         File.Delete(actualPng);
     }
 
+    private static SKSvg LoadSmallSvg()
+    {
+        const string svgMarkup = """
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10">
+              <rect width="20" height="10" fill="red" />
+            </svg>
+            """;
+
+        var svg = new SKSvg();
+        using var input = new MemoryStream(Encoding.UTF8.GetBytes(svgMarkup));
+        svg.Load(input);
+        return svg;
+    }
+
+    [Fact]
+    public void Save_ToPath_UnsupportedFormat_ReturnsFalseAndCreatesNoFile()
+    {
+        var svg = LoadSmallSvg();
+        var directory = Path.Combine(Path.GetTempPath(), "CodeBrix.SkiaSvg.Tests-" + System.Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var output = Path.Combine(directory, "unsupported.gif");
+
+            Assert.False(svg.Save(output, SkiaSharp.SKColors.Transparent, SkiaSharp.SKEncodedImageFormat.Gif));
+            Assert.False(File.Exists(output));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void Save_ToPath_UnsupportedFormat_LeavesExistingFileUntouched()
+    {
+        var svg = LoadSmallSvg();
+        var directory = Path.Combine(Path.GetTempPath(), "CodeBrix.SkiaSvg.Tests-" + System.Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var output = Path.Combine(directory, "existing.gif");
+            var original = new byte[] { 1, 2, 3, 4 };
+            File.WriteAllBytes(output, original);
+
+            Assert.False(svg.Save(output, SkiaSharp.SKColors.Transparent, SkiaSharp.SKEncodedImageFormat.Gif));
+            Assert.Equal(original, File.ReadAllBytes(output));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void Save_ToPath_Png_WritesDecodableFile()
+    {
+        var svg = LoadSmallSvg();
+        var directory = Path.Combine(Path.GetTempPath(), "CodeBrix.SkiaSvg.Tests-" + System.Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var output = Path.Combine(directory, "small.png");
+            File.WriteAllBytes(output, new byte[4096]);
+
+            Assert.True(svg.Save(output, SkiaSharp.SKColors.Transparent));
+
+            using var image = Image.Load<Rgba32>(output);
+            Assert.Equal(20, image.Width);
+            Assert.Equal(10, image.Height);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     [Fact]
     public void Save_EmptyRootDocument_WritesBlankViewportPng()
     {

@@ -265,8 +265,12 @@ apply to svg.Picture:
               SkiaSharp.SKColor background, float scaleX, float scaleY)
 
 Supported export formats:
-    Raster: whatever SkiaSharp.SKEncodedImageFormat supports (PNG, JPEG,
-            WEBP, BMP, GIF, ...)
+    Raster: PNG, JPEG and WEBP. SkiaSharp has encoders for those three
+            only; any other SKEncodedImageFormat value (Bmp, Gif, Ico, ...)
+            makes ToImage/Save return false and write nothing (there is no
+            TIFF value at all). Save(string path, ...) encodes in memory
+            first, so on failure it creates no file and leaves an existing
+            file at that path untouched.
     Vector/document: SVG, PDF, XPS (via the extension methods above)
 
 
@@ -1235,7 +1239,7 @@ Example 6: Retained scene graph with mutation
         // modify an element in the DOM
         var bar = svg.SourceDocument.GetElementById<SvgRectangle>("bar1");
         bar.Height = new SvgUnit(SvgUnitType.Pixel, 150);
-        bar.Fill = new SvgColorServer(System.Drawing.Color.Green);
+        bar.Fill = new SvgColorServer(SvgColor.Green);
 
         // recompile only the affected subtree
         var mutation = svg.ApplyRetainedSceneMutationById("bar1");

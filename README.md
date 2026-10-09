@@ -33,7 +33,7 @@ SkiaSharp and HarfBuzzSharp are referenced as a matched pair, and their native a
 * SVG loading from files, streams, strings, and XmlReaders
 * SVG rendering to SkiaSharp SKPicture and SKCanvas
 * Android VectorDrawable loading and rendering
-* Export to PNG, JPEG, BMP, GIF, TIFF, SVG, PDF, and XPS
+* Export to PNG, JPEG, WEBP, SVG, PDF, and XPS
 * Hit testing (point and rectangle) on SVG elements
 * Retained scene graph for efficient rendering and mutation
 * SVG animation support with time-based control
